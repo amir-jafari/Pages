@@ -3,11 +3,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PyCharm Guide — Coming Soon</title>
+  <title>PyCharm — From Install to Remote Dev</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    body { justify-content: center; align-items: center; flex-direction: column; }
-    #top-tabs { display: flex; }
+    /* ── DEBUGGER ANIMATION ── */
+    .dbg-wrap{background:#0d1117;border-radius:10px;overflow:hidden;border:1px solid #30363d;margin:20px 0;}
+    .dbg-toolbar{background:#1c1c1c;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #30363d;}
+    .dbg-dot{width:12px;height:12px;border-radius:50%;}
+    .dbg-dot.r{background:#ff5f56;}.dbg-dot.y{background:#ffbd2e;}.dbg-dot.g{background:#27c93f;}
+    .dbg-title{font-size:11px;color:#666;margin-left:6px;font-family:'SF Mono',monospace;}
+    .dbg-body{display:grid;grid-template-columns:1fr 280px;}
+    .dbg-code{font-family:'SF Mono','Fira Code',monospace;font-size:12.5px;padding:0;line-height:1.9;}
+    .dbg-line{display:flex;align-items:center;padding:0 14px;position:relative;transition:background .2s;}
+    .dbg-line.current{background:rgba(255,214,0,.12);}
+    .dbg-line.has-bp .bp-dot{background:#f85149;}
+    .bp-col{width:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+    .bp-dot{width:10px;height:10px;border-radius:50%;background:transparent;transition:background .2s;}
+    .ln{width:28px;flex-shrink:0;text-align:right;color:#555;font-size:11px;padding-right:10px;user-select:none;}
+    .dbg-line.current .ln{color:#ffd700;}
+    .arrow-col{width:18px;flex-shrink:0;color:#ffd700;font-size:12px;}
+    .code-txt{color:#e0e0e0;white-space:pre;}
+    .kw-c{color:#ff7b72;}.str-c{color:#a5d6ff;}.num-c{color:#f0883e;}.fn-c{color:#79c0ff;}.cmt-c{color:#8b949e;}.paren-c{color:#e6edf3;}
+    .dbg-panel{border-left:1px solid #30363d;background:#161b22;display:flex;flex-direction:column;}
+    .dbg-panel-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+      color:#8b949e;padding:10px 14px 6px;border-bottom:1px solid #30363d;}
+    .dbg-vars{padding:8px 0;flex:1;overflow-y:auto;max-height:220px;}
+    .dbg-var{display:flex;align-items:center;gap:6px;padding:4px 14px;font-size:12px;font-family:'SF Mono',monospace;}
+    .dbg-var .vn{color:#79c0ff;min-width:70px;}.dbg-var .vt{color:#8b949e;font-size:10px;min-width:48px;}
+    .dbg-var .vv{color:#3fb950;}
+    .dbg-var.new{animation:varPop .4s ease;}
+    .dbg-var.changed .vv{color:#ffd700;animation:varPop .4s ease;}
+    @keyframes varPop{0%{opacity:0;transform:translateX(-6px);}100%{opacity:1;transform:none;}}
+    .dbg-controls{display:flex;gap:6px;padding:10px 14px;border-top:1px solid #30363d;flex-wrap:wrap;}
+    .dbg-btn{background:#21262d;border:1px solid #30363d;color:#e6edf3;border-radius:5px;
+      padding:5px 12px;font-size:11px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
+    .dbg-btn:hover{border-color:#58a6ff;color:#58a6ff;}
+    .dbg-btn:disabled{opacity:.4;cursor:default;}
+    .dbg-btn.run{background:#3fb950;border-color:#3fb950;color:#fff;}
+    .dbg-btn.run:hover{background:#4eca5e;}
+    .dbg-status{font-size:11px;color:#8b949e;padding:0 14px 8px;font-family:'SF Mono',monospace;}
+    .dbg-call-stack{border-top:1px solid #30363d;padding:0;}
+    .dbg-call-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+      color:#8b949e;padding:8px 14px 4px;}
+    .dbg-frame{font-size:11px;font-family:'SF Mono',monospace;padding:3px 14px;color:#8b949e;}
+    .dbg-frame.active-frame{color:#58a6ff;}
+
+    /* ── INTERFACE DIAGRAM ── */
+    .ide-diagram{background:#0d1117;border:1px solid #30363d;border-radius:10px;overflow:hidden;margin:18px 0;}
+    .ide-titlebar{background:#1c1c1c;padding:8px 14px;display:flex;align-items:center;gap:8px;}
+    .ide-body{display:grid;grid-template-columns:220px 1fr 200px;grid-template-rows:auto auto;min-height:220px;font-family:'SF Mono',monospace;font-size:11px;}
+    .ide-panel{border:1px solid #21262d;padding:8px;}
+    .ide-panel-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8b949e;margin-bottom:6px;}
+    .ide-file{display:flex;align-items:center;gap:5px;padding:2px 4px;color:#8b949e;border-radius:3px;cursor:default;}
+    .ide-file:hover{background:#21262d;color:#e6edf3;}
+    .ide-file.active{color:#58a6ff;background:#21262d;}
+    .ide-editor{background:#0d1117;padding:10px 14px;line-height:1.8;border-left:1px solid #21262d;border-right:1px solid #21262d;}
+    .ide-right{background:#161b22;padding:8px;}
+    .ide-tools{grid-column:1/-1;background:#1c1c1c;border-top:1px solid #30363d;
+      display:flex;gap:0;padding:0;}
+    .ide-tool-tab{padding:6px 14px;font-size:10px;color:#8b949e;cursor:default;border-right:1px solid #30363d;}
+    .ide-tool-tab.active{color:#e6edf3;background:#0d1117;}
+
+    /* ── SSH FLOW DIAGRAM ── */
+    .ssh-flow{display:flex;align-items:center;gap:0;padding:12px 0;flex-wrap:wrap;}
+    .ssh-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+      padding:14px 18px;text-align:center;min-width:120px;}
+    .ssh-box .sb-icon{font-size:24px;margin-bottom:4px;}
+    .ssh-box .sb-label{font-size:12px;font-weight:600;}
+    .ssh-box .sb-sub{font-size:10px;color:var(--text-muted);margin-top:2px;}
+    .ssh-arrow{flex:1;display:flex;flex-direction:column;gap:4px;align-items:center;padding:0 8px;min-width:60px;}
+    .ssh-arrow .sa-line{height:2px;width:100%;background:rgba(88,166,255,.3);position:relative;}
+    .ssh-arrow .sa-label{font-size:9px;color:var(--accent);font-family:'SF Mono',monospace;white-space:nowrap;}
+
+    /* ── DEPLOYMENT DIAGRAM ── */
+    .deploy-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:start;margin:16px 0;}
+    .deploy-side{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;}
+    .deploy-side h4{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+    .deploy-file{font-family:'SF Mono',monospace;font-size:11px;color:var(--text-muted);
+      padding:3px 6px;border-radius:3px;display:flex;align-items:center;gap:6px;}
+    .deploy-file.synced{color:var(--green);}
+    .deploy-file.local-only{color:var(--yellow);}
+    .deploy-arrows{display:flex;flex-direction:column;gap:8px;align-items:center;padding:20px 12px;}
+    .deploy-arrow{display:flex;align-items:center;gap:4px;font-family:'SF Mono',monospace;font-size:10px;}
+    .deploy-arrow.up{color:var(--accent);}
+    .deploy-arrow.down{color:var(--green);}
+
+    /* ── INTERPRETER SELECTOR ── */
+    .interp-list{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+    .interp-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+      padding:12px 16px;display:flex;align-items:center;gap:14px;cursor:default;
+      transition:border-color .15s;}
+    .interp-item.selected{border-color:var(--accent);background:rgba(88,166,255,.06);}
+    .interp-item .ii-icon{font-size:24px;flex-shrink:0;}
+    .interp-item .ii-name{font-weight:700;font-size:14px;margin-bottom:2px;}
+    .interp-item .ii-path{font-family:'SF Mono',monospace;font-size:11px;color:var(--text-muted);}
+    .interp-item .ii-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;
+      border-radius:20px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);}
+    .interp-item.selected .ii-badge{background:rgba(88,166,255,.15);border-color:var(--accent);color:var(--accent);}
+
+    /* ── REMOTE BROWSER ── */
+    .remote-browser{background:#0d1117;border:1px solid #30363d;border-radius:8px;
+      font-family:'SF Mono',monospace;font-size:12px;margin:14px 0;overflow:hidden;}
+    .rb-toolbar{background:#1c1c1c;padding:7px 12px;display:flex;align-items:center;gap:8px;
+      border-bottom:1px solid #30363d;}
+    .rb-path{color:#8b949e;font-size:11px;}
+    .rb-path span{color:#58a6ff;}
+    .rb-body{padding:6px 0;}
+    .rb-item{display:flex;align-items:center;gap:8px;padding:4px 16px;color:#8b949e;cursor:default;}
+    .rb-item:hover{background:#161b22;color:#e6edf3;}
+    .rb-item.folder{color:#58a6ff;}
+    .rb-item .ri-perm{margin-left:auto;font-size:10px;color:#555;}
+
+    @media(max-width:800px){
+      .dbg-body{grid-template-columns:1fr;}
+      .dbg-panel{border-left:none;border-top:1px solid #30363d;}
+      .ide-body{grid-template-columns:1fr;}
+      .deploy-grid{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
@@ -17,20 +129,1442 @@
   <div class="top-tab" data-tab="git" onclick="window.location.href='../github-guide/'">
     🐙 GitHub: From Zero to Hero
   </div>
-  <div class="top-tab active soon" data-tab="pycharm">
-    🐍 PyCharm Guide <span class="tab-badge">Coming Soon</span>
+  <div class="top-tab active" data-tab="pycharm">
+    🐍 PyCharm: From Install to Remote Dev
   </div>
 </div>
 
-<div id="tab-pycharm" style="display:flex;margin-left:0;flex:1;padding:88px 52px 80px;align-items:center;justify-content:center;min-height:100vh;">
-  <div class="coming-soon-wrap">
-    <span class="cs-icon">🐍</span>
-    <h1>PyCharm Guide</h1>
-    <p>A comprehensive interactive guide to PyCharm IDE — debugging, refactoring, virtual environments, plugins, and professional Python workflows.</p>
-    <span class="cs-badge">🚧 In Development</span>
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<nav id="sidebar">
+  <div class="sb-head">
+    <div class="sb-logo"><span>🐍</span> PyCharm</div>
+    <div class="sb-sub">Professional IDE Guide · 8 Modules</div>
+    <div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+    <div class="prog-label" id="progressLabel">0 of 8 modules complete</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-title">Overview</div>
+    <div class="nav-item" data-target="landing">🏠 Home &amp; Modules</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Getting Started</div>
+    <div class="nav-item" data-target="m0"><span class="dot b"></span>0 · Install &amp; License<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m1"><span class="dot b"></span>1 · Interface Tour<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m2"><span class="dot b"></span>2 · Interpreters &amp; venv<span class="check">✓</span></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Core Skills</div>
+    <div class="nav-item" data-target="m3"><span class="dot i"></span>3 · Debugging<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m4"><span class="dot i"></span>4 · Terminal<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m5"><span class="dot i"></span>5 · Git in PyCharm<span class="check">✓</span></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Remote &amp; Advanced</div>
+    <div class="nav-item" data-target="m6"><span class="dot a"></span>6 · SSH &amp; Remote Interpreter<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m7"><span class="dot a"></span>7 · Deployment &amp; Mapping<span class="check">✓</span></div>
+    <div class="nav-item" data-target="cs"><span class="dot r"></span>Shortcut Cheat Sheet<span class="check">✓</span></div>
+  </div>
+
+  <div class="sb-foot">
+    <button class="theme-btn" onclick="toggleTheme()">
+      <span id="themeIcon">☀️</span>
+      <span id="themeLabel">Switch to Light Mode</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<main id="main">
+
+<!-- ════════ LANDING PAGE ════════ -->
+<section id="landing" class="page-view active">
+
+<div class="landing-hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="inner">
+    <div class="hero-pill">🎓 JetBrains Professional — Free with .edu</div>
+    <h1>PyCharm<br><span class="ac">From Install to Remote Dev</span></h1>
+    <p class="sub">Master the world's most powerful Python IDE — from your first venv to running code on a remote server over SSH.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="scrollToId('m0')">▶ Start Here</button>
+      <button class="btn-ghost" onclick="scrollToId('m3')">🐛 Debugging</button>
+      <button class="btn-ghost" onclick="scrollToId('m6')" style="border-color:rgba(88,166,255,.4);color:var(--accent)">🖥️ Remote Dev</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="n">8</div><div class="l">Modules</div></div>
+      <div class="stat"><div class="n">Free</div><div class="l">with .edu</div></div>
+      <div class="stat"><div class="n">SSH</div><div class="l">Remote Dev</div></div>
+      <div class="stat"><div class="n">Live</div><div class="l">Debugger</div></div>
+    </div>
   </div>
 </div>
+
+<div class="why-section">
+  <div class="section-label">Why PyCharm Professional?</div>
+  <div class="why-cards">
+    <div class="why-card">
+      <div class="wc-icon">🐛</div>
+      <h4>Visual Debugger</h4>
+      <p>Set breakpoints, step through code line-by-line, inspect any variable — all without touching the terminal.</p>
+    </div>
+    <div class="why-card">
+      <div class="wc-icon">🖥️</div>
+      <h4>True Remote Development</h4>
+      <p>Write code locally, run it on a remote server over SSH. Your files sync automatically. Feels like the server is your laptop.</p>
+    </div>
+    <div class="why-card">
+      <div class="wc-icon">🎓</div>
+      <h4>Free for Students</h4>
+      <p>JetBrains gives every student with a .edu email a free Professional license — worth $249/year. No credit card needed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="cards-section">
+  <div class="section-label">All Modules</div>
+  <div class="mod-cards-grid">
+
+    <div class="mod-card" onclick="scrollToId('m0')">
+      <div class="mod-card-top b"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">📦</div>
+        <div class="mod-card-num">Module 0</div>
+        <h3>Install &amp; Student License</h3>
+        <ul class="mod-card-preview">
+          <li>Community vs Professional</li>
+          <li>Free Pro license with .edu email</li>
+          <li>First-launch project setup</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 20m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m1')">
+      <div class="mod-card-top b"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🗺️</div>
+        <div class="mod-card-num">Module 1</div>
+        <h3>Interface Tour</h3>
+        <ul class="mod-card-preview">
+          <li>Project panel, editor, tool windows</li>
+          <li>Status bar &amp; Python interpreter indicator</li>
+          <li>Search Everywhere &amp; quick actions</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 20m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m2')">
+      <div class="mod-card-top b"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🐍</div>
+        <div class="mod-card-num">Module 2</div>
+        <h3>Interpreters &amp; venv</h3>
+        <ul class="mod-card-preview">
+          <li>System Python vs virtualenv vs conda</li>
+          <li>Create &amp; switch interpreters in PyCharm</li>
+          <li>Install packages via GUI</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 25m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m3')">
+      <div class="mod-card-top i"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🐛</div>
+        <div class="mod-card-num">Module 3</div>
+        <h3>Debugging</h3>
+        <ul class="mod-card-preview">
+          <li>Breakpoints, step over, step into</li>
+          <li>Variables panel &amp; watches</li>
+          <li>Interactive debugger animation</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 35m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m4')">
+      <div class="mod-card-top i"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">💻</div>
+        <div class="mod-card-num">Module 4</div>
+        <h3>Terminal</h3>
+        <ul class="mod-card-preview">
+          <li>Built-in terminal with venv auto-activation</li>
+          <li>Multiple tabs &amp; split terminals</li>
+          <li>Python Console &amp; Jupyter</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 20m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m5')">
+      <div class="mod-card-top i"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">⎇</div>
+        <div class="mod-card-num">Module 5</div>
+        <h3>Git in PyCharm</h3>
+        <ul class="mod-card-preview">
+          <li>Commit, push, pull from the IDE</li>
+          <li>Visual diff &amp; merge tool</li>
+          <li>Branch management &amp; log viewer</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 30m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m6')">
+      <div class="mod-card-top a"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🔐</div>
+        <div class="mod-card-num">Module 6</div>
+        <h3>SSH &amp; Remote Interpreter</h3>
+        <ul class="mod-card-preview">
+          <li>Add SSH credentials in PyCharm</li>
+          <li>Configure a remote Python interpreter</li>
+          <li>Run &amp; debug code on a remote server</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m7')">
+      <div class="mod-card-top a"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🚀</div>
+        <div class="mod-card-num">Module 7</div>
+        <h3>Deployment &amp; File Mapping</h3>
+        <ul class="mod-card-preview">
+          <li>SFTP server configuration</li>
+          <li>Local ↔ remote path mapping</li>
+          <li>Auto-upload, sync, remote file browser</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('cs')">
+      <div class="mod-card-top r"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">⌨️</div>
+        <div class="mod-card-num">Reference</div>
+        <h3>Shortcut Cheat Sheet</h3>
+        <ul class="mod-card-preview">
+          <li>Every essential shortcut by category</li>
+          <li>Mac &amp; Windows/Linux side-by-side</li>
+          <li>Copy any shortcut with one click</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge" style="background:rgba(188,140,255,.12);color:var(--purple);border:1px solid rgba(188,140,255,.3);">Reference</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+
+<!-- ════════ MODULE 0 ════════ -->
+<section class="module page-view" id="m0">
+  <div class="mod-head">
+    <div class="mod-icon">📦</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 20 min</span></div>
+      <h2>Module 0 · Install PyCharm &amp; Get Your Free Pro License</h2>
+    </div>
+  </div>
+
+  <h3>Community vs Professional</h3>
+  <table class="tbl">
+    <tr><th>Feature</th><th>Community (Free)</th><th>Professional (Free with .edu)</th></tr>
+    <tr><td>Python editing &amp; completion</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Debugger</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Git integration</td><td>✅</td><td>✅</td></tr>
+    <tr><td>SSH Remote Interpreter</td><td>🚫</td><td>✅</td></tr>
+    <tr><td>Deployment &amp; file sync</td><td>🚫</td><td>✅</td></tr>
+    <tr><td>Jupyter Notebook support</td><td>🚫</td><td>✅</td></tr>
+    <tr><td>Database tools</td><td>🚫</td><td>✅</td></tr>
+    <tr><td>Django / Flask support</td><td>🚫</td><td>✅</td></tr>
+    <tr><td>Docker integration</td><td>🚫</td><td>✅</td></tr>
+  </table>
+
+  <div class="callout ok"><div class="callout-icon">✅</div>
+    <div><strong>Students get Professional for free.</strong> If you have a <code>.edu</code> email address, you qualify for JetBrains' free educational license — this gives you PyCharm Professional plus every other JetBrains IDE.</div>
+  </div>
+
+  <h3>Step 1 — Get the Free Student License</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Go to the JetBrains Student Program page</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Navigate to <strong>jetbrains.com/student</strong> and click <em>"Apply now"</em>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Fill in the form with your .edu email</strong>
+        <div class="callout info"><div class="callout-icon">ℹ️</div>
+          <div>Use your university email (e.g., <code>yourname@gwu.edu</code>). JetBrains verifies it automatically — no documents needed.</div>
+        </div>
+        <div class="callout warn"><div class="callout-icon">⚠️</div>
+          <div>Use "University / College" as the enrollment type, not "secondary school." Select your actual university from the dropdown or type it in.</div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Check your .edu inbox for a verification email</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Click the confirmation link. JetBrains will create a JetBrains Account linked to your .edu address.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <strong>Download PyCharm Professional from jetbrains.com/pycharm</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Choose the <strong>Professional</strong> edition. There is also a <strong>JetBrains Toolbox App</strong> (recommended) that manages all JetBrains IDEs and updates them automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">5</div>
+      <div class="sb">
+        <strong>Activate with your JetBrains Account</strong>
+        <p style="font-size:14px;color:var(--text-muted);">On first launch, choose <em>"Log in to JetBrains Account"</em> and enter the account you created with your .edu email. The license activates instantly.</p>
+        <div class="callout tip"><div class="callout-icon">💡</div>
+          <div>Your license lasts 1 year and renews for free each year as long as you're enrolled. You'll get a renewal email 30 days before it expires.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>First-Launch Setup</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Create a New Project</strong>
+        <p style="font-size:14px;color:var(--text-muted);">On the welcome screen, click <em>"New Project"</em>. Choose a folder, select <em>"Python"</em> as project type, and pick <em>"New environment using Virtualenv"</em> — PyCharm will create a virtual environment automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Choose a Base Interpreter</strong>
+        <p style="font-size:14px;color:var(--text-muted);">PyCharm will look for Python installations on your system. If you don't see Python 3.10+, install it from <strong>python.org</strong> first, then re-open PyCharm.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Create your first file</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Right-click the project root in the Project panel → <em>New → Python File</em>. Name it <code>main.py</code>. Type <code>print("Hello, PyCharm!")</code> and press <strong>⌃R</strong> (Mac) or <strong>Shift+F10</strong> (Windows) to run it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 0 — Install &amp; Activate</span></div>
+    <ul class="checklist" id="tasks-m0">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Apply for JetBrains Student License with your .edu email</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Download and install PyCharm Professional</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Activate with your JetBrains Account</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a new project with a virtualenv and run <code>print("Hello")</code></span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 1 ════════ -->
+<section class="module page-view" id="m1">
+  <div class="mod-head">
+    <div class="mod-icon">🗺️</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 20 min</span></div>
+      <h2>Module 1 · Interface Tour</h2>
+    </div>
+  </div>
+
+  <h3>The PyCharm Layout</h3>
+  <div class="ide-diagram">
+    <div class="ide-titlebar">
+      <div class="dbg-dot r"></div><div class="dbg-dot y"></div><div class="dbg-dot g"></div>
+      <span style="font-size:11px;color:#666;margin-left:8px;font-family:'SF Mono',monospace;">PyCharm — my_project</span>
+    </div>
+    <div class="ide-body">
+      <div class="ide-panel">
+        <div class="ide-panel-title">📁 Project</div>
+        <div class="ide-file active">📄 main.py</div>
+        <div class="ide-file">📄 utils.py</div>
+        <div class="ide-file">📁 tests/</div>
+        <div class="ide-file" style="padding-left:16px;">📄 test_main.py</div>
+        <div class="ide-file">📄 requirements.txt</div>
+        <div class="ide-file" style="color:#555;">📁 .venv/</div>
+      </div>
+      <div class="ide-editor">
+        <span style="color:#8b949e;font-size:11px;">main.py</span><br>
+        <span style="color:#555;font-size:11px;">1 </span><span style="color:#ff7b72;">def</span> <span style="color:#79c0ff;">greet</span><span style="color:#e6edf3;">(name):</span><br>
+        <span style="color:#555;font-size:11px;">2 </span><span style="color:#e6edf3;">    </span><span style="color:#ff7b72;">return</span> <span style="color:#a5d6ff;">f"Hello, {name}!"</span><br>
+        <span style="color:#555;font-size:11px;">3 </span><br>
+        <span style="color:#555;font-size:11px;">4 </span><span style="background:rgba(255,214,0,.15);display:inline-block;width:100%"><span style="color:#8b949e;font-size:10px;">●</span> <span style="color:#e6edf3;">result = greet(</span><span style="color:#a5d6ff;">"GWU"</span><span style="color:#e6edf3;">)</span></span><br>
+        <span style="color:#555;font-size:11px;">5 </span><span style="color:#79c0ff;">print</span><span style="color:#e6edf3;">(result)</span>
+      </div>
+      <div class="ide-right">
+        <div class="ide-panel-title">🔍 Structure</div>
+        <div style="font-size:11px;color:#79c0ff;padding:2px 0;">⚡ greet(name)</div>
+        <div style="font-size:11px;color:#555;padding:4px 0 0;">Variables</div>
+        <div style="font-size:11px;color:#3fb950;padding:2px 0;">result = "Hello, GWU!"</div>
+      </div>
+      <div class="ide-tools">
+        <div class="ide-tool-tab active">▶ Run</div>
+        <div class="ide-tool-tab">🐛 Debug</div>
+        <div class="ide-tool-tab">💻 Terminal</div>
+        <div class="ide-tool-tab">🐍 Python Console</div>
+        <div class="ide-tool-tab">⎇ Git</div>
+        <div class="ide-tool-tab">🚀 Deployment</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Key Areas</h3>
+  <table class="tbl">
+    <tr><th>Area</th><th>What it's for</th><th>How to open</th></tr>
+    <tr><td>Project Panel</td><td>File tree of your project</td><td>⌘1 / Alt+1</td></tr>
+    <tr><td>Editor</td><td>Where you write code — center stage</td><td>Click any file</td></tr>
+    <tr><td>Run Panel</td><td>Output from running your script</td><td>⌘4 / Alt+4</td></tr>
+    <tr><td>Debug Panel</td><td>Breakpoints, variables, call stack</td><td>⌘5 / Alt+5</td></tr>
+    <tr><td>Terminal</td><td>Shell inside the IDE</td><td>⌥F12 / Alt+F12</td></tr>
+    <tr><td>Python Console</td><td>Interactive REPL</td><td>Tools → Python Console</td></tr>
+    <tr><td>Git Panel</td><td>Commit, log, branches</td><td>⌘9 / Alt+9</td></tr>
+    <tr><td>Deployment</td><td>Remote server file sync</td><td>Tools → Deployment</td></tr>
+  </table>
+
+  <h3>The Most Important Shortcuts</h3>
+  <table class="tbl">
+    <tr><th>Action</th><th>Mac</th><th>Windows/Linux</th></tr>
+    <tr><td>Search Everywhere</td><td>⇧⇧ (double Shift)</td><td>Shift Shift</td></tr>
+    <tr><td>Run file</td><td>⌃R</td><td>Shift+F10</td></tr>
+    <tr><td>Debug file</td><td>⌃D</td><td>Shift+F9</td></tr>
+    <tr><td>Find &amp; Replace</td><td>⌘R</td><td>Ctrl+R</td></tr>
+    <tr><td>Go to definition</td><td>⌘B or ⌘Click</td><td>Ctrl+B or Ctrl+Click</td></tr>
+    <tr><td>Reformat code</td><td>⌘⌥L</td><td>Ctrl+Alt+L</td></tr>
+    <tr><td>Comment/uncomment</td><td>⌘/</td><td>Ctrl+/</td></tr>
+    <tr><td>Settings</td><td>⌘,</td><td>Ctrl+Alt+S</td></tr>
+  </table>
+
+  <div class="callout tip"><div class="callout-icon">💡</div>
+    <div><strong>Search Everywhere (double Shift)</strong> is the most powerful shortcut in PyCharm. It finds files, classes, functions, settings, actions — anything. Master this one first.</div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 1 — Explore the Interface</span></div>
+    <ul class="checklist" id="tasks-m1">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open the Project panel (⌘1) and find your <code>main.py</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Use double-Shift to search for "Python Console" and open it</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run your script with ⌃R and see output in the Run panel</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Change the theme: Settings → Appearance → Theme</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 2 ════════ -->
+<section class="module page-view" id="m2">
+  <div class="mod-head">
+    <div class="mod-icon">🐍</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 25 min</span></div>
+      <h2>Module 2 · Interpreters &amp; Virtual Environments</h2>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="ct">Why does this matter?</div>
+    Every Python project should have its own <strong>virtual environment</strong> — an isolated copy of Python with only the packages that project needs. Without this, installing a library for one project can break another. PyCharm manages this for you automatically.
+  </div>
+
+  <h3>Types of Interpreters</h3>
+  <div class="interp-list">
+    <div class="interp-item selected">
+      <div class="ii-icon">📦</div>
+      <div>
+        <div class="ii-name">Virtualenv</div>
+        <div class="ii-path">.venv/bin/python</div>
+      </div>
+      <div class="ii-badge">Recommended</div>
+    </div>
+    <div class="interp-item">
+      <div class="ii-icon">🐍</div>
+      <div>
+        <div class="ii-name">System Python</div>
+        <div class="ii-path">/usr/bin/python3</div>
+      </div>
+      <div class="ii-badge">Avoid for projects</div>
+    </div>
+    <div class="interp-item">
+      <div class="ii-icon">🐼</div>
+      <div>
+        <div class="ii-name">Conda Environment</div>
+        <div class="ii-path">~/miniconda3/envs/myenv/bin/python</div>
+      </div>
+      <div class="ii-badge">For data science</div>
+    </div>
+    <div class="interp-item">
+      <div class="ii-icon">🐋</div>
+      <div>
+        <div class="ii-name">Docker</div>
+        <div class="ii-path">container:python3</div>
+      </div>
+      <div class="ii-badge">Pro only</div>
+    </div>
+    <div class="interp-item">
+      <div class="ii-icon">🔐</div>
+      <div>
+        <div class="ii-name">SSH Remote</div>
+        <div class="ii-path">user@server.edu:/usr/bin/python3</div>
+      </div>
+      <div class="ii-badge">Pro only · Module 6</div>
+    </div>
+  </div>
+
+  <h3>Create a New Virtualenv</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Open Settings → Project → Python Interpreter</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Mac: <strong>⌘,</strong> → Project → Python Interpreter. Windows: <strong>Ctrl+Alt+S</strong> → Project → Python Interpreter.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Click "Add Interpreter" → "Add Local Interpreter"</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Select <em>Virtualenv Environment</em> → <em>New</em>. PyCharm suggests a path like <code>project-folder/.venv</code>. Choose the base Python version (e.g., Python 3.11).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Click OK — PyCharm creates the venv automatically</strong>
+        <p style="font-size:14px;color:var(--text-muted);">You'll see the interpreter change in the status bar (bottom right). Future package installs go into this venv only.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Switch Between Interpreters</h3>
+  <p>Click the interpreter name in the <strong>bottom-right status bar</strong> — a popup lets you switch instantly between any interpreter configured for that project.</p>
+
+  <div class="callout info"><div class="callout-icon">ℹ️</div>
+    <div>You can also switch via the run configuration. Click the run dropdown (top right) → <em>Edit Configurations</em> → change the Python Interpreter for that specific run.</div>
+  </div>
+
+  <h3>Install Packages via PyCharm</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Settings → Project → Python Interpreter</strong>
+        <p style="font-size:14px;color:var(--text-muted);">You see a list of installed packages. Click the <strong>+</strong> button.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Search for the package (e.g., "numpy") and click Install</strong>
+        <p style="font-size:14px;color:var(--text-muted);">PyCharm runs <code>pip install numpy</code> in your venv. You can see the output in the panel below.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout tip"><div class="callout-icon">💡</div>
+    <div>PyCharm also detects <code>requirements.txt</code> automatically. If it sees missing packages, a yellow banner appears in the editor with a one-click "Install requirements" button.</div>
+  </div>
+
+  <h3>Conda Environments</h3>
+  <div class="code-wrap">
+    <div class="code-label">Terminal (create conda env first, then add to PyCharm)</div>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="c"># Create a conda environment with a specific Python version</span>
+conda create -n ml-project python=3.11 numpy pandas scikit-learn
+conda activate ml-project
+
+<span class="c"># Then in PyCharm: Add Interpreter → Conda Environment → Existing</span>
+<span class="c"># PyCharm finds conda automatically if it's in your PATH</span></pre>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 2 — Configure Interpreters</span></div>
+    <ul class="checklist" id="tasks-m2">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open Settings → Python Interpreter and see the current venv</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Install the <code>requests</code> package via the PyCharm GUI</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Click the interpreter in the status bar and confirm it shows your venv</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 3 ════════ -->
+<section class="module page-view" id="m3">
+  <div class="mod-head">
+    <div class="mod-icon">🐛</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 35 min</span></div>
+      <h2>Module 3 · Debugging</h2>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="ct">What is a debugger?</div>
+    A debugger lets you <strong>pause your program mid-run</strong> and inspect the state of every variable at that exact moment. Instead of adding <code>print()</code> statements everywhere, you set a <em>breakpoint</em> — the program stops there and waits for your instructions.
+  </div>
+
+  <h3>Interactive Debugger — Step Through Code</h3>
+  <p style="color:var(--text-muted);font-size:14px;">Press <strong>Run Debug</strong> to start. Use the buttons to step through the code and watch the variables update in real time.</p>
+
+  <div class="dbg-wrap" id="debugger">
+    <div class="dbg-toolbar">
+      <div class="dbg-dot r"></div><div class="dbg-dot y"></div><div class="dbg-dot g"></div>
+      <span class="dbg-title">grade_calculator.py — Debug</span>
+    </div>
+    <div class="dbg-body">
+      <div class="dbg-code" id="dbgCode">
+        <div class="dbg-line" data-ln="1"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">1</div><div class="arrow-col"></div><div class="code-txt"><span class="kw-c">def</span> <span class="fn-c">calculate_grade</span>(scores):</div></div>
+        <div class="dbg-line has-bp" data-ln="2"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">2</div><div class="arrow-col"></div><div class="code-txt">    total = <span class="fn-c">sum</span>(scores)</div></div>
+        <div class="dbg-line" data-ln="3"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">3</div><div class="arrow-col"></div><div class="code-txt">    average = total / <span class="fn-c">len</span>(scores)</div></div>
+        <div class="dbg-line" data-ln="4"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">4</div><div class="arrow-col"></div><div class="code-txt">    <span class="kw-c">if</span> average &gt;= <span class="num-c">90</span>:</div></div>
+        <div class="dbg-line" data-ln="5"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">5</div><div class="arrow-col"></div><div class="code-txt">        grade = <span class="str-c">'A'</span></div></div>
+        <div class="dbg-line" data-ln="6"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">6</div><div class="arrow-col"></div><div class="code-txt">    <span class="kw-c">elif</span> average &gt;= <span class="num-c">80</span>:</div></div>
+        <div class="dbg-line" data-ln="7"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">7</div><div class="arrow-col"></div><div class="code-txt">        grade = <span class="str-c">'B'</span></div></div>
+        <div class="dbg-line" data-ln="8"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">8</div><div class="arrow-col"></div><div class="code-txt">    <span class="kw-c">return</span> grade</div></div>
+        <div class="dbg-line" data-ln="9"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">9</div><div class="arrow-col"></div><div class="code-txt">&nbsp;</div></div>
+        <div class="dbg-line" data-ln="10"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">10</div><div class="arrow-col"></div><div class="code-txt">scores = [<span class="num-c">85</span>, <span class="num-c">92</span>, <span class="num-c">78</span>, <span class="num-c">95</span>, <span class="num-c">88</span>]</div></div>
+        <div class="dbg-line" data-ln="11"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">11</div><div class="arrow-col"></div><div class="code-txt">result = <span class="fn-c">calculate_grade</span>(scores)</div></div>
+        <div class="dbg-line" data-ln="12"><div class="bp-col"><div class="bp-dot"></div></div><div class="ln">12</div><div class="arrow-col"></div><div class="code-txt"><span class="fn-c">print</span>(result)</div></div>
+      </div>
+      <div class="dbg-panel">
+        <div class="dbg-panel-head">Variables</div>
+        <div class="dbg-vars" id="dbgVars">
+          <div style="font-size:11px;color:#555;padding:8px 14px;">Press ▶ Run Debug to start</div>
+        </div>
+        <div class="dbg-call-stack" id="dbgStack" style="display:none;">
+          <div class="dbg-call-head">Call Stack</div>
+          <div class="dbg-frame active-frame" id="dbgFrame1"></div>
+          <div class="dbg-frame" id="dbgFrame2"></div>
+        </div>
+        <div class="dbg-controls">
+          <button class="dbg-btn run" id="dbgRunBtn" onclick="dbgRun()">▶ Run Debug</button>
+          <button class="dbg-btn" id="dbgStepBtn" onclick="dbgStep()" disabled>⤵ Step Over</button>
+          <button class="dbg-btn" id="dbgContBtn" onclick="dbgContinue()" disabled>⏩ Continue</button>
+          <button class="dbg-btn" id="dbgResetBtn" onclick="dbgReset()" style="display:none">↺ Reset</button>
+        </div>
+        <div class="dbg-status" id="dbgStatus">Not running</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Debug Controls</h3>
+  <table class="tbl">
+    <tr><th>Control</th><th>Mac</th><th>Win/Linux</th><th>What it does</th></tr>
+    <tr><td>▶ Resume / Run Debug</td><td>⌃D</td><td>Shift+F9</td><td>Start debug / run to next breakpoint</td></tr>
+    <tr><td>⤵ Step Over</td><td>F8</td><td>F8</td><td>Execute current line, stay in this function</td></tr>
+    <tr><td>⤴ Step Into</td><td>F7</td><td>F7</td><td>Step into the function call on current line</td></tr>
+    <tr><td>⤶ Step Out</td><td>⇧F8</td><td>Shift+F8</td><td>Finish current function, return to caller</td></tr>
+    <tr><td>⏩ Run to Cursor</td><td>⌥F9</td><td>Alt+F9</td><td>Run until the line where cursor is</td></tr>
+    <tr><td>⏹ Stop</td><td>⌘F2</td><td>Ctrl+F2</td><td>Kill the debug session</td></tr>
+  </table>
+
+  <h3>Breakpoints</h3>
+  <p>Click the <strong>gutter</strong> (the narrow strip left of the line numbers) to set a red breakpoint dot. Click again to remove it. The program will pause just before executing that line.</p>
+
+  <div class="callout tip"><div class="callout-icon">💡</div>
+    <div><strong>Conditional Breakpoints:</strong> Right-click a breakpoint → <em>Edit Breakpoint</em> → add a condition like <code>average &lt; 80</code>. The program only stops when that condition is true — saves time when debugging loops with thousands of iterations.</div>
+  </div>
+
+  <h3>The Variables Panel</h3>
+  <p>When paused at a breakpoint, the Variables panel shows every variable in scope. You can:</p>
+  <ul>
+    <li>Expand lists, dicts, and objects to see their contents</li>
+    <li>Right-click a variable → <em>Set Value</em> to change it live while debugging</li>
+    <li>Right-click → <em>Copy Value</em> to grab the current value</li>
+  </ul>
+
+  <h3>Watches &amp; Evaluate Expression</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">⊕</div>
+      <div class="sb">
+        <strong>Add a Watch</strong>
+        <p style="font-size:14px;color:var(--text-muted);">In the Variables panel, click <em>"+" → New Watch"</em>. Type any expression like <code>total * 2</code> or <code>len(scores)</code>. It updates automatically at every step.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">⊞</div>
+      <div class="sb">
+        <strong>Evaluate Expression</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Press <strong>⌥F8</strong> (Mac) or <strong>Alt+F8</strong> (Win) while paused. Type any Python expression — it runs in the current scope. Great for testing a fix without restarting the whole program.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 3 — Debug a Script</span></div>
+    <ul class="checklist" id="tasks-m3">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Use the interactive debugger above — step through all lines</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Set a breakpoint in your own <code>main.py</code> and run in debug mode (⌃D)</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">While paused, add a Watch expression and see it update</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Try Evaluate Expression (⌥F8) to run a quick calculation while paused</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 4 ════════ -->
+<section class="module page-view" id="m4">
+  <div class="mod-head">
+    <div class="mod-icon">💻</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 20 min</span></div>
+      <h2>Module 4 · Terminal in PyCharm</h2>
+    </div>
+  </div>
+
+  <h3>The Built-in Terminal</h3>
+  <p>PyCharm has a full terminal emulator built in. The key advantage: it <strong>automatically activates your project's virtual environment</strong> when it opens. No need to manually run <code>source .venv/bin/activate</code> every time.</p>
+
+  <div class="terminal">
+    <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="t-title">Terminal — PyCharm</span></div>
+    <div class="t-body">
+      <div><span class="tp">(.venv) user@mac </span><span class="tc">~/my_project $</span> <span style="color:#e0e0e0">pip list</span></div>
+      <div class="to">Package      Version</div>
+      <div class="to">------------ -------</div>
+      <div class="to">numpy        1.26.4</div>
+      <div class="to">pandas       2.2.0</div>
+      <div class="to">pip          24.0</div>
+      <div style="margin-top:8px;"><span class="tp">(.venv) user@mac </span><span class="tc">~/my_project $</span> <span style="color:#e0e0e0">python main.py</span></div>
+      <div class="tp">Hello, GWU!</div>
+    </div>
+  </div>
+
+  <p>Notice the <code>(.venv)</code> prefix — the virtual environment is active. Any <code>pip install</code> here goes into your project's isolated environment.</p>
+
+  <h3>Open the Terminal</h3>
+  <table class="tbl">
+    <tr><th>Action</th><th>Mac</th><th>Windows/Linux</th></tr>
+    <tr><td>Open Terminal</td><td>⌥F12</td><td>Alt+F12</td></tr>
+    <tr><td>New terminal tab</td><td>⌘T in terminal</td><td>Ctrl+Shift+T</td></tr>
+    <tr><td>Close tab</td><td>⌘W</td><td>Ctrl+W</td></tr>
+    <tr><td>Split terminal</td><td>Right-click tab → Split</td><td>Right-click → Split</td></tr>
+  </table>
+
+  <h3>Multiple Terminal Tabs</h3>
+  <p>You can open multiple terminal tabs — useful for running a server in one tab and sending requests in another:</p>
+  <div class="code-wrap">
+    <div class="code-label">Tab 1 — Run Flask server</div>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>python app.py
+<span class="c"># server running on http://127.0.0.1:5000</span></pre>
+  </div>
+  <div class="code-wrap">
+    <div class="code-label">Tab 2 — Test the API</div>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">curl http://127.0.0.1:5000/api/data</pre>
+  </div>
+
+  <h3>Python Console vs Terminal</h3>
+  <table class="tbl">
+    <tr><th></th><th>Terminal</th><th>Python Console</th></tr>
+    <tr><td>What it is</td><td>Full shell (bash/zsh/PowerShell)</td><td>Interactive Python REPL</td></tr>
+    <tr><td>Best for</td><td>Running scripts, git, pip, system commands</td><td>Exploring objects, testing snippets</td></tr>
+    <tr><td>Opens with venv</td><td>✅ Automatic</td><td>✅ Uses project interpreter</td></tr>
+    <tr><td>Can import your modules</td><td>Only if you run python first</td><td>✅ Yes, directly</td></tr>
+    <tr><td>Open via</td><td>⌥F12</td><td>Tools → Python Console</td></tr>
+  </table>
+
+  <div class="callout tip"><div class="callout-icon">💡</div>
+    <div>In the Python Console, use <strong>⌃Space</strong> (Ctrl+Space) for auto-completion — it works just like the editor. You can inspect objects, run quick tests, and even plot matplotlib graphs interactively.</div>
+  </div>
+
+  <h3>Changing the Default Shell</h3>
+  <p>Settings → Tools → Terminal → Shell path. Set it to <code>/bin/zsh</code>, <code>/bin/bash</code>, or <code>C:\Program Files\Git\bin\bash.exe</code> on Windows.</p>
+
+  <div class="task-box">
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 4 — Master the Terminal</span></div>
+    <ul class="checklist" id="tasks-m4">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open the terminal (⌥F12) and verify <code>(.venv)</code> is shown</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Install a package with <code>pip install requests</code> in the terminal</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open a second terminal tab and split it</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open the Python Console and import your installed package</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 5 ════════ -->
+<section class="module page-view" id="m5">
+  <div class="mod-head">
+    <div class="mod-icon">⎇</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 30 min</span></div>
+      <h2>Module 5 · Git in PyCharm</h2>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="ct">Why use Git inside PyCharm?</div>
+    PyCharm's Git integration lets you commit, push, pull, resolve conflicts, and review history — all without leaving the editor. The <strong>visual diff tool</strong> makes merge conflicts much easier to understand than raw terminal output.
+  </div>
+
+  <h3>Enable VCS / Connect a Repo</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Initialize a new repo: Git menu → Initialize Repository</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Or open an existing repo: File → Open → select the folder. PyCharm detects <code>.git/</code> automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Add a remote: Git → Manage Remotes</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Click <strong>+</strong> and paste your GitHub URL. Name it <em>origin</em>.</p>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>https://github.com/your-username/your-repo.git</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>The Commit Workflow</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Open the Commit panel: ⌘K (Mac) / Ctrl+K (Win)</strong>
+        <p style="font-size:14px;color:var(--text-muted);">A panel shows all changed files. Check the ones you want to stage, write a commit message, and press <em>"Commit"</em> or <em>"Commit and Push"</em>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Review the diff before committing</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Click any changed file in the panel to see a side-by-side diff right there. Red = removed, green = added. You can even edit directly in the diff view.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Push: Git → Push (⌘⇧K / Ctrl+Shift+K)</strong>
+        <p style="font-size:14px;color:var(--text-muted);">A dialog shows the commits about to be pushed and the target branch. Confirm and click Push.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Key Git Actions</h3>
+  <table class="tbl">
+    <tr><th>Action</th><th>Mac</th><th>Windows</th></tr>
+    <tr><td>Commit</td><td>⌘K</td><td>Ctrl+K</td></tr>
+    <tr><td>Push</td><td>⌘⇧K</td><td>Ctrl+Shift+K</td></tr>
+    <tr><td>Pull</td><td>⌘T</td><td>Ctrl+T</td></tr>
+    <tr><td>View Git Log</td><td>⌘9 → Log tab</td><td>Alt+9 → Log</td></tr>
+    <tr><td>New Branch</td><td>Git menu → New Branch</td><td>Git → New Branch</td></tr>
+    <tr><td>Annotate (blame)</td><td>Right-click gutter → Annotate</td><td>Right-click → Annotate</td></tr>
+    <tr><td>Revert file</td><td>⌘⌥Z</td><td>Ctrl+Alt+Z</td></tr>
+  </table>
+
+  <h3>Resolving Merge Conflicts Visually</h3>
+  <p>When a merge conflict occurs, PyCharm opens a 3-panel merge tool:</p>
+  <div class="diagram-wrap">
+    <div class="diagram-label">PyCharm 3-Way Merge Tool</div>
+    <div class="before-after" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="ba-panel before">
+        <div class="ba-title">⬅ Yours (Local)</div>
+        <div class="ba-files" style="font-size:12px;">
+          <div>def greet(name):</div>
+          <div class="fn-bad">    return "Hello " + name</div>
+        </div>
+      </div>
+      <div class="ba-panel" style="background:rgba(88,166,255,.06);border-left:1px solid var(--border);border-right:1px solid var(--border);">
+        <div class="ba-title" style="color:var(--accent);">⬆ Result</div>
+        <div class="ba-files" style="font-size:12px;">
+          <div>def greet(name):</div>
+          <div class="fn-ok">    return f"Hello, {name}!"</div>
+        </div>
+      </div>
+      <div class="ba-panel after">
+        <div class="ba-title">Theirs (Remote) ➡</div>
+        <div class="ba-files" style="font-size:12px;">
+          <div>def greet(name):</div>
+          <div class="fn-ok">    return f"Hello, {name}!"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:14px;color:var(--text-muted);">Click the <strong>→</strong> or <strong>←</strong> arrows to accept a change from either side into the Result panel. When done, click <em>"Apply"</em>. PyCharm marks the conflict as resolved automatically.</p>
+
+  <h3>Git Log Viewer</h3>
+  <p>Open the Git panel (⌘9 / Alt+9) → click the <strong>Log</strong> tab. You see the full commit graph, click any commit to inspect changes, filter by author, branch, or date, and right-click to cherry-pick or revert.</p>
+
+  <div class="task-box">
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 5 — Commit &amp; Push from PyCharm</span></div>
+    <ul class="checklist" id="tasks-m5">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add a remote GitHub URL via Git → Manage Remotes</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Edit a file, open Commit panel (⌘K), write a message, commit</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Push to GitHub (⌘⇧K) and verify it appears on github.com</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open the Git Log (⌘9 → Log) and explore the commit history</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 6 ════════ -->
+<section class="module page-view" id="m6">
+  <div class="mod-head">
+    <div class="mod-icon">🔐</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40 min</span><span class="badge" style="background:rgba(88,166,255,.1);color:var(--accent);border-color:var(--accent);">Pro only</span></div>
+      <h2>Module 6 · SSH &amp; Remote Interpreter</h2>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="ct">What is a Remote Interpreter?</div>
+    A Remote Interpreter lets you <strong>write code on your local machine but run it on a remote server</strong> via SSH. PyCharm handles the file sync automatically. This is essential for HPC clusters, GPU servers, or cloud VMs where you need more compute power than your laptop.
+  </div>
+
+  <h3>How It Works</h3>
+  <div class="ssh-flow">
+    <div class="ssh-box">
+      <div class="sb-icon">💻</div>
+      <div class="sb-label">Your Laptop</div>
+      <div class="sb-sub">PyCharm Editor<br>local files</div>
+    </div>
+    <div class="ssh-arrow">
+      <div class="sa-label">SSH tunnel</div>
+      <div class="sa-line"></div>
+      <div class="sa-label" style="color:var(--green);">file sync (SFTP)</div>
+    </div>
+    <div class="ssh-box">
+      <div class="sb-icon">🖥️</div>
+      <div class="sb-label">Remote Server</div>
+      <div class="sb-sub">Python runs here<br>GPU / HPC cluster</div>
+    </div>
+    <div class="ssh-arrow">
+      <div class="sa-label" style="color:var(--green);">stdout / stderr</div>
+      <div class="sa-line" style="background:rgba(63,185,80,.3);"></div>
+      <div class="sa-label">back to PyCharm</div>
+    </div>
+    <div class="ssh-box">
+      <div class="sb-icon">📊</div>
+      <div class="sb-label">Output</div>
+      <div class="sb-sub">Appears in<br>PyCharm Run panel</div>
+    </div>
+  </div>
+
+  <h3>Step 1 — Add SSH Credentials</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Settings → Tools → SSH Configurations</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Click <strong>+</strong> to add a new SSH connection. Fill in:</p>
+        <table class="tbl">
+          <tr><th>Field</th><th>Example</th></tr>
+          <tr><td>Host</td><td>colonial.gwu.edu</td></tr>
+          <tr><td>Port</td><td>22</td></tr>
+          <tr><td>Username</td><td>your_netid</td></tr>
+          <tr><td>Auth type</td><td>Key pair (recommended) or Password</td></tr>
+          <tr><td>Private key</td><td>~/.ssh/id_ed25519</td></tr>
+        </table>
+        <div class="callout tip"><div class="callout-icon">💡</div>
+          <div>If you haven't created an SSH key yet, run this in the terminal first:<br>
+          <code>ssh-keygen -t ed25519 -C "your@gwu.edu"</code><br>
+          Then copy the public key to the server: <code>ssh-copy-id your_netid@colonial.gwu.edu</code></div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Click "Test Connection"</strong>
+        <p style="font-size:14px;color:var(--text-muted);">PyCharm will try to SSH into the server. You should see a green "Successfully connected" message. If not, check the host, port, and key path.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Step 2 — Configure the Remote Interpreter</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Settings → Project → Python Interpreter → Add Interpreter → On SSH</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Select the SSH configuration you just created. PyCharm will connect and browse the remote Python installations.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <strong>Choose the remote Python binary</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Navigate to the Python path on the remote server, e.g. <code>/usr/bin/python3</code> or the path to a conda env:</p>
+        <div class="code-wrap">
+          <div class="code-label">Common remote Python paths</div>
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># System Python</span>
+/usr/bin/python3
+
+<span class="c"># Conda environment on remote</span>
+/home/username/miniconda3/envs/myenv/bin/python
+
+<span class="c"># Module-loaded Python on HPC</span>
+<span class="c"># First SSH in and run: module load python/3.11 && which python</span></pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">5</div>
+      <div class="sb">
+        <strong>Set the sync folder (remote project path)</strong>
+        <p style="font-size:14px;color:var(--text-muted);">PyCharm asks where to copy your files on the remote server, e.g. <code>/home/username/projects/my_project</code>. This is where your code will live on the remote.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Running Code Remotely</h3>
+  <p>After setup, just press <strong>Run (⌃R)</strong> as normal. PyCharm will:</p>
+  <ol>
+    <li>Sync your local files to the remote server</li>
+    <li>Execute the script using the remote Python interpreter</li>
+    <li>Stream <code>stdout</code> and <code>stderr</code> back to your local Run panel</li>
+  </ol>
+
+  <div class="callout info"><div class="callout-icon">ℹ️</div>
+    <div>You can even <strong>debug remotely</strong> — set breakpoints locally and use ⌃D. PyCharm attaches a remote debug server over SSH. Variables, call stacks, watches — all work exactly the same as local debugging.</div>
+  </div>
+
+  <h3>Install Remote Packages</h3>
+  <div class="code-wrap">
+    <div class="code-label">Option A — via PyCharm GUI (Settings → Interpreter → +)</div>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># PyCharm runs pip install on the REMOTE server for you</span></pre>
+  </div>
+  <div class="code-wrap">
+    <div class="code-label">Option B — SSH terminal directly</div>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">ssh username@colonial.gwu.edu
+conda activate myenv
+pip install torch torchvision</pre>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 6 — Set Up Remote Interpreter</span></div>
+    <ul class="checklist" id="tasks-m6">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add SSH credentials in Settings → Tools → SSH Configurations</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Test the connection successfully</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add remote interpreter via Settings → Python Interpreter → On SSH</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run a simple script and see its output in the local PyCharm Run panel</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 7 ════════ -->
+<section class="module page-view" id="m7">
+  <div class="mod-head">
+    <div class="mod-icon">🚀</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40 min</span><span class="badge" style="background:rgba(88,166,255,.1);color:var(--accent);border-color:var(--accent);">Pro only</span></div>
+      <h2>Module 7 · Deployment &amp; File Mapping</h2>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="ct">Deployment vs Remote Interpreter</div>
+    <strong>Remote Interpreter</strong> (Module 6) = PyCharm runs the code remotely via SSH, syncing files automatically on each run.<br><br>
+    <strong>Deployment</strong> (this module) = a dedicated SFTP server configuration that gives you manual and automatic control over file sync — including upload on save, selective sync, and a visual remote file browser.
+  </div>
+
+  <h3>How Local ↔ Remote Mapping Works</h3>
+  <div class="deploy-grid">
+    <div class="deploy-side">
+      <h4>💻 Local (Your Laptop)</h4>
+      <div class="deploy-file synced">📄 main.py</div>
+      <div class="deploy-file synced">📄 utils.py</div>
+      <div class="deploy-file local-only">📄 config.local.py</div>
+      <div class="deploy-file synced">📁 data/</div>
+      <div class="deploy-file synced" style="padding-left:20px;">📄 train.csv</div>
+    </div>
+    <div class="deploy-arrows">
+      <div class="deploy-arrow up">→ Upload</div>
+      <div style="width:2px;height:40px;background:rgba(88,166,255,.3);margin:0 auto;"></div>
+      <div class="deploy-arrow down">← Download</div>
+    </div>
+    <div class="deploy-side">
+      <h4>🖥️ Remote Server</h4>
+      <div class="deploy-file synced">📄 main.py</div>
+      <div class="deploy-file synced">📄 utils.py</div>
+      <div class="deploy-file" style="color:#555;">📄 config.local.py <span style="font-size:10px;">(excluded)</span></div>
+      <div class="deploy-file synced">📁 data/</div>
+      <div class="deploy-file synced" style="padding-left:20px;">📄 train.csv</div>
+    </div>
+  </div>
+
+  <h3>Step 1 — Configure a Deployment Server</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Settings → Build, Execution, Deployment → Deployment</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Click <strong>+</strong> → SFTP. Name it (e.g., "GWU Colonial One"). Fill in the Connection tab:</p>
+        <table class="tbl">
+          <tr><th>Field</th><th>Example</th></tr>
+          <tr><td>SSH Configuration</td><td>Select the one from Module 6</td></tr>
+          <tr><td>Root path</td><td>/home/your_netid/projects</td></tr>
+        </table>
+        <div class="callout tip"><div class="callout-icon">💡</div>
+          <div>If you already set up SSH credentials in Module 6, select that same configuration here. You don't need to enter credentials again.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Step 2 — Set Path Mappings</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Click the "Mappings" tab in the Deployment configuration</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Add a mapping that tells PyCharm which local folder corresponds to which remote folder:</p>
+        <table class="tbl">
+          <tr><th>Local Path</th><th>Deployment Path</th></tr>
+          <tr><td>/Users/you/projects/my_project</td><td>/home/netid/projects/my_project</td></tr>
+          <tr><td>/Users/you/projects/my_project/data</td><td>/scratch/netid/data</td></tr>
+        </table>
+        <p style="font-size:13px;color:var(--text-muted);">You can have multiple mappings — for example, your main code folder maps to your home directory, but a large data folder maps to a scratch/data partition on the server.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Step 3 — Configure Excluded Paths</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Click the "Excluded Paths" tab</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Add any paths you do NOT want to upload to the server:</p>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">.venv/           <span class="c"># local venv — remote has its own</span>
+__pycache__/
+.git/
+*.local.py       <span class="c"># local-only config files</span>
+.DS_Store</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Upload Options</h3>
+  <table class="tbl">
+    <tr><th>Method</th><th>How</th><th>When to use</th></tr>
+    <tr><td>Manual upload</td><td>Right-click file → Deployment → Upload to …</td><td>One-off uploads</td></tr>
+    <tr><td>Upload all</td><td>Tools → Deployment → Upload to …</td><td>Initial sync of whole project</td></tr>
+    <tr><td>Auto-upload on save</td><td>Tools → Deployment → Options → Upload on explicit save</td><td>Active development on remote</td></tr>
+    <tr><td>Sync (compare)</td><td>Tools → Deployment → Sync with Deployed …</td><td>Check what differs before syncing</td></tr>
+  </table>
+
+  <div class="callout warn"><div class="callout-icon">⚠️</div>
+    <div><strong>Be careful with auto-upload</strong> on large projects or slow connections — every save will trigger an SFTP upload. Enable it only when you're actively developing on a remote target.</div>
+  </div>
+
+  <h3>Remote File Browser</h3>
+  <p>Go to <strong>Tools → Deployment → Browse Remote Host</strong>. A panel opens showing the remote file system:</p>
+
+  <div class="remote-browser">
+    <div class="rb-toolbar">
+      <span style="font-size:12px;color:#666;">🖥️ Remote Files —</span>
+      <span class="rb-path"><span>/home/netid</span>/projects/my_project</span>
+    </div>
+    <div class="rb-body">
+      <div class="rb-item folder">📁 ..</div>
+      <div class="rb-item folder">📁 data<span class="ri-perm">drwxr-xr-x</span></div>
+      <div class="rb-item folder">📁 models<span class="ri-perm">drwxr-xr-x</span></div>
+      <div class="rb-item">📄 main.py<span class="ri-perm">-rw-r--r-- 2.4 KB</span></div>
+      <div class="rb-item">📄 utils.py<span class="ri-perm">-rw-r--r-- 1.1 KB</span></div>
+      <div class="rb-item">📄 requirements.txt<span class="ri-perm">-rw-r--r-- 128 B</span></div>
+      <div class="rb-item">📄 train_output.log<span class="ri-perm">-rw-r--r-- 48 KB</span></div>
+    </div>
+  </div>
+
+  <p style="font-size:14px;color:var(--text-muted);">From this browser you can:</p>
+  <ul>
+    <li>Double-click any file to open and edit it directly (changes save back to the server)</li>
+    <li>Right-click → Download to pull files to local</li>
+    <li>Right-click → Delete, Rename, New File/Directory</li>
+    <li>Drag files between local Project panel and Remote Files panel</li>
+  </ul>
+
+  <h3>Compare Local vs Remote</h3>
+  <p>Right-click any local file → <strong>Deployment → Compare with Deployed Version</strong>. PyCharm shows a diff of the local file vs what's currently on the server — useful to confirm you haven't forgotten to upload something.</p>
+
+  <div class="callout info"><div class="callout-icon">ℹ️</div>
+    <div>You can also run <strong>Tools → Deployment → Sync with Deployed to…</strong> to get a complete side-by-side comparison of the local and remote project folders, with checkboxes to selectively sync individual files.</div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 7 — Deploy &amp; Sync</span></div>
+    <ul class="checklist" id="tasks-m7">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add a Deployment server in Settings → Deployment → + → SFTP</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Set a path mapping: local project folder → remote home folder</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Right-click a Python file → Deployment → Upload — verify it appears on the server</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open Tools → Deployment → Browse Remote Host and explore the file tree</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Edit a remote file directly and watch changes save back to the server</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ CHEAT SHEET ════════ -->
+<section class="module page-view" id="cs">
+  <div class="mod-head">
+    <div class="mod-icon">⌨️</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge" style="background:rgba(188,140,255,.12);color:var(--purple);border:1px solid rgba(188,140,255,.3);">Reference</span></div>
+      <h2>PyCharm Shortcut Cheat Sheet</h2>
+    </div>
+  </div>
+
+  <div class="cs-grid">
+
+    <div class="cs-card">
+      <div class="cs-head">Running &amp; Debugging</div>
+      <table><tr><td>Run file</td><td>⌃R / Shift+F10</td></tr>
+      <tr><td>Debug file</td><td>⌃D / Shift+F9</td></tr>
+      <tr><td>Step Over</td><td>F8</td></tr>
+      <tr><td>Step Into</td><td>F7</td></tr>
+      <tr><td>Step Out</td><td>⇧F8 / Shift+F8</td></tr>
+      <tr><td>Resume program</td><td>⌘⌥R / F9</td></tr>
+      <tr><td>Evaluate expression</td><td>⌥F8 / Alt+F8</td></tr>
+      <tr><td>Toggle breakpoint</td><td>⌘F8 / Ctrl+F8</td></tr>
+      <tr><td>Stop</td><td>⌘F2 / Ctrl+F2</td></tr></table>
+    </div>
+
+    <div class="cs-card">
+      <div class="cs-head">Navigation</div>
+      <table><tr><td>Search Everywhere</td><td>⇧⇧ / Shift+Shift</td></tr>
+      <tr><td>Go to file</td><td>⌘⇧O / Ctrl+Shift+N</td></tr>
+      <tr><td>Go to class</td><td>⌘O / Ctrl+N</td></tr>
+      <tr><td>Go to symbol</td><td>⌘⌥O / Ctrl+Alt+Shift+N</td></tr>
+      <tr><td>Go to definition</td><td>⌘B / Ctrl+B</td></tr>
+      <tr><td>Find usages</td><td>⌥F7 / Alt+F7</td></tr>
+      <tr><td>Go to line</td><td>⌘L / Ctrl+G</td></tr>
+      <tr><td>Back / Forward</td><td>⌘[ / ⌘] / Ctrl+Alt+←/→</td></tr>
+      <tr><td>Recent files</td><td>⌘E / Ctrl+E</td></tr></table>
+    </div>
+
+    <div class="cs-card">
+      <div class="cs-head">Editing</div>
+      <table><tr><td>Auto-complete</td><td>⌃Space / Ctrl+Space</td></tr>
+      <tr><td>Reformat code</td><td>⌘⌥L / Ctrl+Alt+L</td></tr>
+      <tr><td>Comment line</td><td>⌘/ / Ctrl+/</td></tr>
+      <tr><td>Duplicate line</td><td>⌘D / Ctrl+D</td></tr>
+      <tr><td>Delete line</td><td>⌘⌫ / Ctrl+Y</td></tr>
+      <tr><td>Move line up/down</td><td>⇧⌘↑/↓ / Shift+Alt+↑/↓</td></tr>
+      <tr><td>Rename (refactor)</td><td>⇧F6</td></tr>
+      <tr><td>Surround with</td><td>⌘⌥T / Ctrl+Alt+T</td></tr>
+      <tr><td>Quick fix</td><td>⌥↩ / Alt+Enter</td></tr></table>
+    </div>
+
+    <div class="cs-card">
+      <div class="cs-head">Git</div>
+      <table><tr><td>Commit</td><td>⌘K / Ctrl+K</td></tr>
+      <tr><td>Push</td><td>⌘⇧K / Ctrl+Shift+K</td></tr>
+      <tr><td>Pull</td><td>⌘T / Ctrl+T</td></tr>
+      <tr><td>Git log</td><td>⌘9 → Log / Alt+9</td></tr>
+      <tr><td>Annotate (blame)</td><td>Gutter right-click</td></tr>
+      <tr><td>Revert file</td><td>⌘⌥Z / Ctrl+Alt+Z</td></tr>
+      <tr><td>Compare with branch</td><td>Git → Compare with Branch</td></tr></table>
+    </div>
+
+    <div class="cs-card">
+      <div class="cs-head">Tool Windows</div>
+      <table><tr><td>Project panel</td><td>⌘1 / Alt+1</td></tr>
+      <tr><td>Bookmarks</td><td>⌘2 / Alt+2</td></tr>
+      <tr><td>Run panel</td><td>⌘4 / Alt+4</td></tr>
+      <tr><td>Debug panel</td><td>⌘5 / Alt+5</td></tr>
+      <tr><td>Git panel</td><td>⌘9 / Alt+9</td></tr>
+      <tr><td>Terminal</td><td>⌥F12 / Alt+F12</td></tr>
+      <tr><td>Python console</td><td>Tools → Python Console</td></tr>
+      <tr><td>Settings</td><td>⌘, / Ctrl+Alt+S</td></tr>
+      <tr><td>Hide all panels</td><td>⇧⌘F12 / Ctrl+Shift+F12</td></tr></table>
+    </div>
+
+    <div class="cs-card">
+      <div class="cs-head">Search &amp; Replace</div>
+      <table><tr><td>Find in file</td><td>⌘F / Ctrl+F</td></tr>
+      <tr><td>Replace in file</td><td>⌘R / Ctrl+R</td></tr>
+      <tr><td>Find in project</td><td>⌘⇧F / Ctrl+Shift+F</td></tr>
+      <tr><td>Replace in project</td><td>⌘⇧R / Ctrl+Shift+R</td></tr>
+      <tr><td>Next occurrence</td><td>⌘G / F3</td></tr>
+      <tr><td>Highlight usages</td><td>⌘⇧F7 / Ctrl+Shift+F7</td></tr></table>
+    </div>
+
+  </div>
+
+  <div class="callout tip" style="margin-top:24px;"><div class="callout-icon">💡</div>
+    <div><strong>Customize any shortcut:</strong> Settings → Keymap. Search for an action by name and double-click to add or change its shortcut. You can export your keymap to share across machines.</div>
+  </div>
+</section>
+
+<!-- ════════ COMPLETION ════════ -->
+<div class="finish" id="finish" style="display:none;">
+  <div class="trophy">🏆</div>
+  <h2 style="font-size:26px;font-weight:800;margin-bottom:10px;">PyCharm Guide Complete!</h2>
+  <p style="color:var(--text-muted);max-width:440px;margin:0 auto 20px;">
+    You can now install, debug, connect SSH, deploy, and sync files like a professional developer. Go build something great.
+  </p>
+</div>
+
+</main>
 
 <script src="../js/app.js"></script>
+<script>
+// ── DEBUGGER SIMULATION ──
+const DBG_STEPS = [
+  { line: 11, status: 'Paused at breakpoint — line 11', vars: [], stack: ['<module> — line 11'] },
+  { line: 2,  status: 'Stepped into calculate_grade()', vars: [
+      { n:'scores', t:'list', v:'[85, 92, 78, 95, 88]' }
+    ], stack: ['calculate_grade — line 2', '<module> — line 11'] },
+  { line: 3,  status: 'Executed: total = sum(scores)', vars: [
+      { n:'scores', t:'list', v:'[85, 92, 78, 95, 88]' },
+      { n:'total',  t:'int',  v:'438', isNew: true }
+    ], stack: ['calculate_grade — line 3', '<module> — line 11'] },
+  { line: 4,  status: 'Executed: average = total / len(scores)', vars: [
+      { n:'scores',  t:'list',  v:'[85, 92, 78, 95, 88]' },
+      { n:'total',   t:'int',   v:'438' },
+      { n:'average', t:'float', v:'87.6', isNew: true }
+    ], stack: ['calculate_grade — line 4', '<module> — line 11'] },
+  { line: 6,  status: 'average (87.6) < 90 → checking elif', vars: [
+      { n:'scores',  t:'list',  v:'[85, 92, 78, 95, 88]' },
+      { n:'total',   t:'int',   v:'438' },
+      { n:'average', t:'float', v:'87.6' }
+    ], stack: ['calculate_grade — line 6', '<module> — line 11'] },
+  { line: 7,  status: 'average >= 80 ✓ → grade = "B"', vars: [
+      { n:'scores',  t:'list',  v:'[85, 92, 78, 95, 88]' },
+      { n:'total',   t:'int',   v:'438' },
+      { n:'average', t:'float', v:'87.6' },
+      { n:'grade',   t:'str',   v:'"B"', isNew: true }
+    ], stack: ['calculate_grade — line 7', '<module> — line 11'] },
+  { line: 8,  status: 'About to return grade', vars: [
+      { n:'scores',  t:'list',  v:'[85, 92, 78, 95, 88]' },
+      { n:'total',   t:'int',   v:'438' },
+      { n:'average', t:'float', v:'87.6' },
+      { n:'grade',   t:'str',   v:'"B"' }
+    ], stack: ['calculate_grade — line 8', '<module> — line 11'] },
+  { line: 12, status: 'Returned "B" → about to print', vars: [
+      { n:'scores', t:'list', v:'[85, 92, 78, 95, 88]' },
+      { n:'result', t:'str',  v:'"B"', isNew: true }
+    ], stack: ['<module> — line 12'] },
+  { line: -1, status: 'Program finished — output: B', vars: [
+      { n:'scores', t:'list', v:'[85, 92, 78, 95, 88]' },
+      { n:'result', t:'str',  v:'"B"' }
+    ], stack: [] }
+];
+
+let dbgCurrentStep = -1;
+
+function dbgRun() {
+  dbgCurrentStep = 0;
+  document.getElementById('dbgRunBtn').style.display = 'none';
+  document.getElementById('dbgResetBtn').style.display = '';
+  document.getElementById('dbgStepBtn').disabled = false;
+  document.getElementById('dbgContBtn').disabled = false;
+  document.getElementById('dbgStack').style.display = '';
+  dbgApplyStep();
+}
+
+function dbgStep() {
+  if (dbgCurrentStep < DBG_STEPS.length - 1) {
+    dbgCurrentStep++;
+    dbgApplyStep();
+  }
+  if (dbgCurrentStep === DBG_STEPS.length - 1) {
+    document.getElementById('dbgStepBtn').disabled = true;
+    document.getElementById('dbgContBtn').disabled = true;
+  }
+}
+
+function dbgContinue() {
+  dbgCurrentStep = DBG_STEPS.length - 1;
+  dbgApplyStep();
+  document.getElementById('dbgStepBtn').disabled = true;
+  document.getElementById('dbgContBtn').disabled = true;
+}
+
+function dbgReset() {
+  dbgCurrentStep = -1;
+  document.querySelectorAll('.dbg-line').forEach(l => l.classList.remove('current'));
+  document.querySelectorAll('.dbg-line').forEach(l => l.querySelector('.arrow-col').textContent = '');
+  document.getElementById('dbgVars').innerHTML = '<div style="font-size:11px;color:#555;padding:8px 14px;">Press ▶ Run Debug to start</div>';
+  document.getElementById('dbgStatus').textContent = 'Not running';
+  document.getElementById('dbgStack').style.display = 'none';
+  document.getElementById('dbgRunBtn').style.display = '';
+  document.getElementById('dbgResetBtn').style.display = 'none';
+  document.getElementById('dbgStepBtn').disabled = true;
+  document.getElementById('dbgContBtn').disabled = true;
+}
+
+function dbgApplyStep() {
+  const s = DBG_STEPS[dbgCurrentStep];
+  // Clear all current highlights
+  document.querySelectorAll('.dbg-line').forEach(l => {
+    l.classList.remove('current');
+    l.querySelector('.arrow-col').textContent = '';
+  });
+  // Highlight current line
+  if (s.line > 0) {
+    const line = document.querySelector(`.dbg-line[data-ln="${s.line}"]`);
+    if (line) {
+      line.classList.add('current');
+      line.querySelector('.arrow-col').textContent = '→';
+    }
+  }
+  // Update vars
+  const varsEl = document.getElementById('dbgVars');
+  varsEl.innerHTML = s.vars.length === 0
+    ? '<div style="font-size:11px;color:#555;padding:8px 14px;">No variables in scope</div>'
+    : s.vars.map(v => `<div class="dbg-var ${v.isNew ? 'new' : ''}"><span class="vn">${v.n}</span><span class="vt">${v.t}</span><span class="vv">${v.v}</span></div>`).join('');
+  // Update call stack
+  if (s.stack.length > 0) {
+    document.getElementById('dbgFrame1').textContent = s.stack[0] || '';
+    document.getElementById('dbgFrame2').textContent = s.stack[1] || '';
+  }
+  document.getElementById('dbgStatus').textContent = s.status;
+}
+</script>
 </body>
 </html>

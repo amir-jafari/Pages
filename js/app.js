@@ -114,6 +114,8 @@ function toggleTask(li) {
 }
 
 // ── PROGRESS ──
+const isPycharm = window.location.pathname.includes('pycharm-guide');
+const PROGRESS_KEY = isPycharm ? 'pycharm-guide-progress' : 'git-guide-progress';
 const MODULES = ['m0','m1','m2','m3','m4','m5','m6','m7'];
 function getModuleDone(id) {
   const ul = document.getElementById('tasks-' + id);
@@ -147,11 +149,11 @@ function saveProgress() {
       if (li.classList.contains('done')) state[id].push(i);
     });
   });
-  localStorage.setItem('git-guide-progress', JSON.stringify(state));
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
 }
 
 function loadProgress() {
-  const raw = localStorage.getItem('git-guide-progress');
+  const raw = localStorage.getItem(PROGRESS_KEY);
   if (!raw) return;
   try {
     const state = JSON.parse(raw);
