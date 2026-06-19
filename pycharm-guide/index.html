@@ -436,7 +436,7 @@
       <div class="sb">
         <strong>Fill in the form with your .edu email</strong>
         <div class="callout info"><div class="callout-icon">ℹ️</div>
-          <div>Use your university email (e.g., <code>yourname@gwu.edu</code>). JetBrains verifies it automatically — no documents needed.</div>
+          <div>Use your university email (e.g., <code>yourname@university.edu</code>). JetBrains verifies it automatically — no documents needed.</div>
         </div>
         <div class="callout warn"><div class="callout-icon">⚠️</div>
           <div>Use "University / College" as the enrollment type, not "secondary school." Select your actual university from the dropdown or type it in.</div>
@@ -537,14 +537,14 @@
         <span style="color:#555;font-size:11px;">1 </span><span style="color:#ff7b72;">def</span> <span style="color:#79c0ff;">greet</span><span style="color:#e6edf3;">(name):</span><br>
         <span style="color:#555;font-size:11px;">2 </span><span style="color:#e6edf3;">    </span><span style="color:#ff7b72;">return</span> <span style="color:#a5d6ff;">f"Hello, {name}!"</span><br>
         <span style="color:#555;font-size:11px;">3 </span><br>
-        <span style="color:#555;font-size:11px;">4 </span><span style="background:rgba(255,214,0,.15);display:inline-block;width:100%"><span style="color:#8b949e;font-size:10px;">●</span> <span style="color:#e6edf3;">result = greet(</span><span style="color:#a5d6ff;">"GWU"</span><span style="color:#e6edf3;">)</span></span><br>
+        <span style="color:#555;font-size:11px;">4 </span><span style="background:rgba(255,214,0,.15);display:inline-block;width:100%"><span style="color:#8b949e;font-size:10px;">●</span> <span style="color:#e6edf3;">result = greet(</span><span style="color:#a5d6ff;">"World"</span><span style="color:#e6edf3;">)</span></span><br>
         <span style="color:#555;font-size:11px;">5 </span><span style="color:#79c0ff;">print</span><span style="color:#e6edf3;">(result)</span>
       </div>
       <div class="ide-right">
         <div class="ide-panel-title">🔍 Structure</div>
         <div style="font-size:11px;color:#79c0ff;padding:2px 0;">⚡ greet(name)</div>
         <div style="font-size:11px;color:#555;padding:4px 0 0;">Variables</div>
-        <div style="font-size:11px;color:#3fb950;padding:2px 0;">result = "Hello, GWU!"</div>
+        <div style="font-size:11px;color:#3fb950;padding:2px 0;">result = "Hello, World!"</div>
       </div>
       <div class="ide-tools">
         <div class="ide-tool-tab active">▶ Run</div>
@@ -872,7 +872,7 @@ conda activate ml-project
       <div class="to">pandas       2.2.0</div>
       <div class="to">pip          24.0</div>
       <div style="margin-top:8px;"><span class="tp">(.venv) user@mac </span><span class="tc">~/my_project $</span> <span style="color:#e0e0e0">python main.py</span></div>
-      <div class="tp">Hello, GWU!</div>
+      <div class="tp">Hello, World!</div>
     </div>
   </div>
 
@@ -1099,7 +1099,7 @@ conda activate ml-project
         <p style="font-size:14px;color:var(--text-muted);">Click <strong>+</strong> to add a new SSH connection. Fill in:</p>
         <table class="tbl">
           <tr><th>Field</th><th>Example</th></tr>
-          <tr><td>Host</td><td>colonial.gwu.edu</td></tr>
+          <tr><td>Host</td><td>hpc.university.edu</td></tr>
           <tr><td>Port</td><td>22</td></tr>
           <tr><td>Username</td><td>your_netid</td></tr>
           <tr><td>Auth type</td><td>Key pair (recommended) or Password</td></tr>
@@ -1107,8 +1107,8 @@ conda activate ml-project
         </table>
         <div class="callout tip"><div class="callout-icon">💡</div>
           <div>If you haven't created an SSH key yet, run this in the terminal first:<br>
-          <code>ssh-keygen -t ed25519 -C "your@gwu.edu"</code><br>
-          Then copy the public key to the server: <code>ssh-copy-id your_netid@colonial.gwu.edu</code></div>
+          <code>ssh-keygen -t ed25519 -C "your@email.com"</code><br>
+          Then copy the public key to the server: <code>ssh-copy-id username@hpc.university.edu</code></div>
         </div>
       </div>
     </div>
@@ -1176,7 +1176,7 @@ conda activate ml-project
   </div>
   <div class="code-wrap">
     <div class="code-label">Option B — SSH terminal directly</div>
-    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">ssh username@colonial.gwu.edu
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">ssh username@hpc.university.edu
 conda activate myenv
 pip install torch torchvision</pre>
   </div>
@@ -1240,7 +1240,7 @@ pip install torch torchvision</pre>
       <div class="sn">1</div>
       <div class="sb">
         <strong>Settings → Build, Execution, Deployment → Deployment</strong>
-        <p style="font-size:14px;color:var(--text-muted);">Click <strong>+</strong> → SFTP. Name it (e.g., "GWU Colonial One"). Fill in the Connection tab:</p>
+        <p style="font-size:14px;color:var(--text-muted);">Click <strong>+</strong> → SFTP. Give it a name (e.g., "My Remote Server"). Fill in the Connection tab:</p>
         <table class="tbl">
           <tr><th>Field</th><th>Example</th></tr>
           <tr><td>SSH Configuration</td><td>Select the one from Module 6</td></tr>
