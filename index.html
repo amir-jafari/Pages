@@ -1,11 +1,256 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=github-guide/">
-  <title>Student Guides</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Guides — GWU</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { flex-direction: column; align-items: center; justify-content: flex-start; }
+
+    /* ── NAV BAR ── */
+    #top-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 32px;
+      justify-content: space-between; z-index: 300;
+    }
+    .bar-logo { font-size: 15px; font-weight: 800; letter-spacing: -.02em;
+      display: flex; align-items: center; gap: 8px; }
+    .bar-logo .bl-sub { font-size: 11px; font-weight: 400; color: var(--text-muted); }
+    .theme-btn-sm { display: flex; align-items: center; gap: 6px;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+      padding: 5px 12px; color: var(--text-muted); cursor: pointer;
+      font-size: 12px; transition: all .15s; }
+    .theme-btn-sm:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ── HERO ── */
+    .lp-hero {
+      width: 100%; text-align: center; padding: 120px 24px 64px;
+      position: relative; overflow: hidden;
+    }
+    #heroCanvas { position: absolute; inset: 0; width: 100%; height: 100%;
+      opacity: .15; pointer-events: none; }
+    .lp-hero .inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+    .lp-pill { display: inline-flex; align-items: center; gap: 6px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 4px 14px; font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+    .lp-hero h1 { font-size: 52px; font-weight: 800; letter-spacing: -.03em;
+      line-height: 1.1; margin-bottom: 16px; }
+    .lp-hero h1 .ac { color: var(--accent); }
+    .lp-hero .sub { font-size: 17px; color: var(--text-muted);
+      max-width: 480px; margin: 0 auto 48px; line-height: 1.6; }
+
+    /* ── GUIDE CARDS ── */
+    .guide-cards {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; max-width: 860px; width: 100%;
+      padding: 0 24px 80px; margin: 0 auto;
+    }
+    .guide-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; cursor: pointer;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    }
+    .guide-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.3);
+    }
+    .guide-card.git:hover { border-color: var(--green);
+      box-shadow: 0 12px 40px rgba(63,185,80,.15); }
+    .guide-card.py:hover { border-color: var(--accent);
+      box-shadow: 0 12px 40px rgba(88,166,255,.15); }
+
+    .gc-stripe { height: 6px; width: 100%; }
+    .guide-card.git .gc-stripe { background: linear-gradient(90deg, var(--green), #57ff99); }
+    .guide-card.py  .gc-stripe { background: linear-gradient(90deg, var(--accent), var(--purple)); }
+
+    .gc-body { padding: 28px 28px 20px; flex: 1; }
+    .gc-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+    .gc-title { font-size: 24px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 8px; }
+    .gc-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+    .gc-modules { display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
+    .gc-mod { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+    .gc-mod::before { content: '→'; color: var(--accent); font-size: 11px; flex-shrink: 0; }
+    .guide-card.git .gc-mod::before { color: var(--green); }
+
+    .gc-footer { padding: 16px 28px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; }
+    .gc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .gc-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); }
+    .gc-cta { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+    .guide-card.git .gc-cta { color: var(--green); }
+    .guide-card.py  .gc-cta { color: var(--accent); }
+
+    /* ── STATS ROW ── */
+    .lp-stats { display: flex; justify-content: center; gap: 48px; margin-bottom: 0; }
+    .lp-stats .stat .n { font-size: 26px; font-weight: 800; color: var(--accent); }
+    .lp-stats .stat .l { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-align: center; }
+
+    /* ── FOOTER ── */
+    .lp-footer { width: 100%; text-align: center; padding: 20px 24px 32px;
+      font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); }
+
+    @media (max-width: 680px) {
+      .guide-cards { grid-template-columns: 1fr; }
+      .lp-hero h1 { font-size: 34px; }
+      .lp-stats { gap: 24px; }
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecting… <a href="github-guide/">click here</a> if it doesn't happen automatically.</p>
+
+<!-- ── TOP BAR ── -->
+<div id="top-bar">
+  <div class="bar-logo">
+    📚 <span>Developer Guides</span>
+    <span class="bl-sub">· GWU</span>
+  </div>
+  <button class="theme-btn-sm" onclick="toggleTheme()">
+    <span id="themeIcon">☀️</span>
+    <span id="themeLabel">Light Mode</span>
+  </button>
+</div>
+
+<!-- ── HERO ── -->
+<div class="lp-hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="inner">
+    <div class="lp-pill">🎓 Free for GWU Students &amp; Faculty</div>
+    <h1>Learn the Tools<br><span class="ac">Every Developer Uses</span></h1>
+    <p class="sub">Interactive, hands-on guides for Git &amp; GitHub and PyCharm — from absolute zero to professional workflows.</p>
+    <div class="lp-stats">
+      <div class="stat"><div class="n">2</div><div class="l">Guides</div></div>
+      <div class="stat"><div class="n">16</div><div class="l">Modules</div></div>
+      <div class="stat"><div class="n">Free</div><div class="l">Always</div></div>
+      <div class="stat"><div class="n">Live</div><div class="l">Demos</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GUIDE CARDS ── -->
+<div class="guide-cards">
+
+  <a class="guide-card git" href="github-guide/">
+    <div class="gc-stripe"></div>
+    <div class="gc-body">
+      <span class="gc-icon">🐙</span>
+      <div class="gc-title">Git &amp; GitHub</div>
+      <div class="gc-desc">Master version control — the one skill every developer needs, no matter the language. From your very first commit to CI/CD pipelines.</div>
+      <div class="gc-modules">
+        <div class="gc-mod">Core concepts, install &amp; first commits</div>
+        <div class="gc-mod">Branching, merging &amp; Pull Requests</div>
+        <div class="gc-mod">Conflict resolution &amp; undoing mistakes</div>
+        <div class="gc-mod">GitHub Actions &amp; CI/CD automation</div>
+        <div class="gc-mod">Git ER Room — 7 real-world disasters fixed</div>
+      </div>
+    </div>
+    <div class="gc-footer">
+      <div class="gc-tags">
+        <span class="gc-tag">8 Modules</span>
+        <span class="gc-tag">~4h</span>
+        <span class="gc-tag">All Levels</span>
+      </div>
+      <div class="gc-cta">Open Guide →</div>
+    </div>
+  </a>
+
+  <a class="guide-card py" href="pycharm-guide/">
+    <div class="gc-stripe"></div>
+    <div class="gc-body">
+      <span class="gc-icon">🐍</span>
+      <div class="gc-title">PyCharm IDE</div>
+      <div class="gc-desc">Go from install to professional remote development. Free Professional edition for all students with a .edu email — no credit card needed.</div>
+      <div class="gc-modules">
+        <div class="gc-mod">Free Pro license with .edu + setup</div>
+        <div class="gc-mod">Visual debugger — interactive step-through</div>
+        <div class="gc-mod">Virtual environments &amp; interpreters</div>
+        <div class="gc-mod">SSH remote interpreter &amp; execution</div>
+        <div class="gc-mod">Deployment, file mapping &amp; remote browser</div>
+      </div>
+    </div>
+    <div class="gc-footer">
+      <div class="gc-tags">
+        <span class="gc-tag">8 Modules</span>
+        <span class="gc-tag">~4h</span>
+        <span class="gc-tag">Free with .edu</span>
+      </div>
+      <div class="gc-cta">Open Guide →</div>
+    </div>
+  </a>
+
+</div>
+
+<div class="lp-footer">
+  Open source · Free for everyone · Built for GWU students &amp; faculty
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+}
+
+// ── HERO CANVAS ──
+(function() {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const branches = [
+    { y: 0.25, color: '#3fb950', commits: [0.08, 0.22, 0.38, 0.55, 0.72, 0.88] },
+    { y: 0.50, color: '#58a6ff', commits: [0.05, 0.18, 0.32, 0.48, 0.65, 0.80, 0.95] },
+    { y: 0.75, color: '#f0883e', commits: [0.12, 0.28, 0.45, 0.62, 0.78] },
+  ];
+  const merges = [{ from: 0, to: 1, atX: 0.38 }, { from: 2, to: 1, atX: 0.62 }];
+  let offset = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    ctx.globalAlpha = isDark ? 0.2 : 0.1;
+    branches.forEach(b => {
+      const y = canvas.height * b.y;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+      ctx.strokeStyle = b.color; ctx.lineWidth = 1.5; ctx.stroke();
+      b.commits.forEach(cx => {
+        const x = ((cx + offset) % 1.05) * canvas.width;
+        ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = isDark ? '#0d1117' : '#ffffff'; ctx.fill();
+        ctx.strokeStyle = b.color; ctx.lineWidth = 1.5; ctx.stroke();
+      });
+    });
+    merges.forEach(m => {
+      const x = ((m.atX + offset) % 1.05) * canvas.width;
+      const y1 = canvas.height * branches[m.from].y;
+      const y2 = canvas.height * branches[m.to].y;
+      ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2);
+      ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1; ctx.setLineDash([3,3]); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+    offset = (offset + 0.0003) % 1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── THEME INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  if (saved === 'light') {
+    document.getElementById('themeIcon').textContent = '🌙';
+    document.getElementById('themeLabel').textContent = 'Dark Mode';
+  }
+});
+</script>
 </body>
 </html>
