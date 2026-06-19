@@ -1,0 +1,2735 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git &amp; GitHub — From Zero to Pro</title>
+  <style>
+    :root[data-theme="dark"] {
+      --bg:#0d1117; --surface:#161b22; --surface2:#21262d; --border:#30363d;
+      --text:#e6edf3; --text-muted:#8b949e; --accent:#58a6ff; --accent-hover:#79c0ff;
+      --green:#3fb950; --yellow:#d29922; --red:#f85149; --orange:#f0883e;
+      --purple:#bc8cff; --code-bg:#0d1117;
+    }
+    :root[data-theme="light"] {
+      --bg:#ffffff; --surface:#f6f8fa; --surface2:#eaeef2; --border:#d0d7de;
+      --text:#1f2328; --text-muted:#656d76; --accent:#0969da; --accent-hover:#0550ae;
+      --green:#1a7f37; --yellow:#9a6700; --red:#cf222e; --orange:#bc4c00;
+      --purple:#8250df; --code-bg:#f6f8fa;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+      background:var(--bg);color:var(--text);line-height:1.65;display:flex;min-height:100vh;}
+
+    /* ── SIDEBAR ── */
+    #sidebar{width:264px;min-height:100vh;background:var(--surface);
+      border-right:1px solid var(--border);padding:0;position:fixed;top:0;left:0;
+      overflow-y:auto;z-index:100;display:flex;flex-direction:column;}
+    .sb-head{padding:20px 20px 16px;border-bottom:1px solid var(--border);}
+    .sb-logo{font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px;
+      letter-spacing:-0.02em;}
+    .sb-logo span{font-size:28px;}
+    .sb-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+    .prog-wrap{margin-top:14px;background:var(--surface2);border-radius:6px;height:6px;overflow:hidden;}
+    .prog-bar{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));
+      width:0%;transition:width .5s ease;border-radius:6px;}
+    .prog-label{font-size:11px;color:var(--text-muted);margin-top:5px;}
+    .nav-group{padding:8px 0 4px;}
+    .nav-group-title{font-size:10px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.08em;color:var(--text-muted);padding:6px 20px 3px;}
+    .nav-item{display:flex;align-items:center;gap:8px;padding:7px 20px;
+      color:var(--text-muted);text-decoration:none;font-size:13px;
+      border-left:3px solid transparent;transition:all .15s;cursor:pointer;}
+    .nav-item:hover{color:var(--text);background:var(--surface2);}
+    .nav-item.active{color:var(--accent);border-left-color:var(--accent);
+      background:var(--surface2);font-weight:600;}
+    .nav-item.done{color:var(--text);}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .dot.b{background:var(--green);}.dot.i{background:var(--yellow);}
+    .dot.a{background:var(--red);}.dot.r{background:var(--purple);}
+    .check{margin-left:auto;color:var(--green);font-size:11px;opacity:0;}
+    .nav-item.done .check{opacity:1;}
+    .sb-foot{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);}
+    .theme-btn{display:flex;align-items:center;gap:8px;background:var(--surface2);
+      border:1px solid var(--border);border-radius:6px;padding:7px 12px;
+      color:var(--text-muted);cursor:pointer;font-size:12px;width:100%;transition:all .15s;}
+    .theme-btn:hover{color:var(--text);border-color:var(--accent);}
+
+    /* ── MAIN ── */
+    #main{margin-left:264px;flex:1;padding:44px 52px 80px;max-width:960px;}
+
+    /* ── HERO ── */
+    .hero{text-align:center;padding:48px 0 52px;border-bottom:1px solid var(--border);margin-bottom:60px;}
+    .hero-pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface);
+      border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;
+      color:var(--text-muted);margin-bottom:20px;}
+    .hero h1{font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:14px;}
+    .hero h1 .ac{color:var(--accent);}
+    .hero p{font-size:17px;color:var(--text-muted);max-width:480px;margin:0 auto 36px;}
+    .stats{display:flex;justify-content:center;gap:48px;}
+    .stat .n{font-size:28px;font-weight:800;color:var(--accent);}
+    .stat .l{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .project-intro{background:linear-gradient(135deg,rgba(88,166,255,.07),rgba(63,185,80,.07));
+      border:1px solid var(--accent);border-radius:10px;padding:18px 22px;margin-top:32px;
+      text-align:left;font-size:14px;}
+    .project-intro strong{color:var(--accent);}
+
+    /* ── MODULE ── */
+    .module{margin-bottom:80px;scroll-margin-top:20px;}
+    .mod-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:28px;
+      padding-bottom:20px;border-bottom:1px solid var(--border);}
+    .mod-icon{font-size:32px;flex-shrink:0;line-height:1;}
+    .mod-meta{flex:1;}
+    .badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;}
+    .badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;
+      text-transform:uppercase;letter-spacing:.05em;border:1px solid;}
+    .badge.b{background:rgba(63,185,80,.12);color:var(--green);border-color:rgba(63,185,80,.3);}
+    .badge.i{background:rgba(210,153,34,.12);color:var(--yellow);border-color:rgba(210,153,34,.3);}
+    .badge.a{background:rgba(248,81,73,.12);color:var(--red);border-color:rgba(248,81,73,.3);}
+    .badge.t{background:var(--surface2);color:var(--text-muted);border-color:var(--border);}
+    .module h2{font-size:28px;font-weight:800;letter-spacing:-.02em;}
+    .module h3{font-size:18px;font-weight:700;margin:32px 0 12px;display:flex;
+      align-items:center;gap:8px;}
+    .module h3::before{content:'';display:block;width:3px;height:18px;
+      background:var(--accent);border-radius:2px;flex-shrink:0;}
+    .module p{font-size:15px;margin-bottom:12px;color:var(--text);}
+    .module ul,.module ol{margin:8px 0 14px 22px;font-size:15px;}
+    .module li{margin-bottom:5px;}
+    a{color:var(--accent);}
+
+    /* ── CONCEPT BOX ── */
+    .concept{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+      padding:16px 20px;margin:16px 0;}
+    .concept .ct{font-size:10px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.07em;color:var(--accent);margin-bottom:8px;}
+
+    /* ── CODE ── */
+    .code-wrap{position:relative;margin:12px 0 20px;}
+    .code-label{font-size:11px;color:var(--text-muted);background:var(--surface);
+      border:1px solid var(--border);border-bottom:none;border-radius:6px 6px 0 0;
+      padding:4px 12px;display:inline-block;font-family:'SF Mono','Fira Code',monospace;}
+    pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;
+      padding:16px 20px;overflow-x:auto;font-family:'SF Mono','Fira Code','Cascadia Code',monospace;
+      font-size:13px;line-height:1.75;position:relative;}
+    .code-label+pre{border-radius:0 6px 6px 6px;}
+    .copy-btn{position:absolute;top:8px;right:8px;background:var(--surface2);
+      border:1px solid var(--border);border-radius:4px;color:var(--text-muted);
+      padding:4px 10px;font-size:11px;cursor:pointer;transition:all .15s;
+      font-family:-apple-system,sans-serif;}
+    .copy-btn:hover{color:var(--text);border-color:var(--accent);}
+    .copy-btn.copied{color:var(--green);border-color:var(--green);}
+    code{font-family:'SF Mono','Fira Code',monospace;font-size:.87em;
+      background:var(--surface2);padding:2px 6px;border-radius:4px;border:1px solid var(--border);}
+    pre code{background:none;padding:0;border:none;font-size:1em;}
+    .c{color:#8b949e;} /* comment */
+    .kw{color:#ff7b72;} /* keyword */
+    .str{color:#a5d6ff;} /* string */
+    .num{color:#f0883e;} /* number/flag */
+    .ok{color:#3fb950;} /* success */
+    .err{color:#f85149;} /* error */
+    .dim{color:#8b949e;} /* muted output */
+    .hl{color:#ffd700;} /* highlight */
+
+    /* ── TERMINAL ── */
+    .terminal{background:#0a0a0a;border-radius:8px;overflow:hidden;margin:12px 0 20px;
+      font-family:'SF Mono','Fira Code',monospace;font-size:13px;}
+    .t-bar{background:#1c1c1c;padding:10px 14px;display:flex;align-items:center;gap:6px;}
+    .t-dot{width:12px;height:12px;border-radius:50%;}
+    .t-dot.r{background:#ff5f56;}.t-dot.y{background:#ffbd2e;}.t-dot.g{background:#27c93f;}
+    .t-title{font-size:11px;color:#666;margin-left:8px;}
+    .t-body{padding:14px 18px;line-height:2;color:#e0e0e0;}
+    .tp{color:#27c93f;} .tc{color:#79c0ff;} .to{color:#8b949e;} .te{color:#ff5f56;}
+
+    /* ── CALLOUTS ── */
+    .callout{border-radius:8px;padding:13px 16px;margin:14px 0;font-size:14px;
+      border-left:4px solid;display:flex;gap:10px;align-items:flex-start;}
+    .callout-icon{flex-shrink:0;font-size:16px;margin-top:1px;}
+    .callout.info{background:rgba(88,166,255,.08);border-color:var(--accent);}
+    .callout.warn{background:rgba(210,153,34,.1);border-color:var(--yellow);}
+    .callout.danger{background:rgba(248,81,73,.1);border-color:var(--red);}
+    .callout.tip{background:rgba(188,140,255,.1);border-color:var(--purple);}
+    .callout.ok{background:rgba(63,185,80,.1);border-color:var(--green);}
+
+    /* ── PROJECT TASK ── */
+    .task-box{background:linear-gradient(135deg,rgba(88,166,255,.06),rgba(63,185,80,.06));
+      border:1px solid var(--accent);border-radius:10px;padding:20px 24px;margin:24px 0;}
+    .task-box-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .task-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;
+      background:var(--accent);color:#fff;padding:3px 8px;border-radius:4px;}
+    .task-box-head .title{font-weight:700;font-size:15px;}
+    .checklist{list-style:none;margin:0;padding:0;}
+    .checklist li{display:flex;align-items:flex-start;gap:10px;padding:5px 0;
+      font-size:14px;cursor:pointer;user-select:none;}
+    .cb{width:16px;height:16px;border:2px solid var(--border);border-radius:4px;
+      flex-shrink:0;margin-top:2px;transition:all .15s;display:flex;
+      align-items:center;justify-content:center;font-size:10px;}
+    .checklist li.done .cb{background:var(--green);border-color:var(--green);color:#fff;}
+    .checklist li.done .ct-text{text-decoration:line-through;color:var(--text-muted);}
+
+    /* ── COLLAPSIBLE ── */
+    .collapse{border:1px solid var(--border);border-radius:8px;margin:16px 0;overflow:hidden;}
+    .collapse-head{display:flex;align-items:center;gap:10px;padding:12px 16px;
+      cursor:pointer;background:var(--surface);font-size:14px;font-weight:600;
+      user-select:none;transition:background .15s;}
+    .collapse-head:hover{background:var(--surface2);}
+    .arr{margin-left:auto;color:var(--text-muted);font-size:12px;
+      transition:transform .2s;display:inline-block;}
+    .collapse.open .arr{transform:rotate(90deg);}
+    .collapse-body{display:none;padding:16px;border-top:1px solid var(--border);}
+    .collapse.open .collapse-body{display:block;}
+
+    /* ── STEPS ── */
+    .steps{margin:16px 0;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .sn{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;
+      display:flex;align-items:center;justify-content:center;font-size:13px;
+      font-weight:700;flex-shrink:0;margin-top:2px;}
+    .sb{flex:1;}
+    .sb strong{display:block;font-size:15px;margin-bottom:5px;}
+
+    /* ── GIT GRAPH ── */
+    .graph-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+      padding:20px 24px;margin:16px 0;overflow-x:auto;}
+    .graph-wrap svg text{font-family:'SF Mono',monospace;}
+
+    /* ── TABLE ── */
+    .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0 20px;}
+    .tbl th{text-align:left;padding:8px 12px;background:var(--surface);
+      border:1px solid var(--border);font-size:11px;font-weight:700;
+      text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);}
+    .tbl td{padding:8px 12px;border:1px solid var(--border);vertical-align:top;}
+    .tbl tr:hover td{background:var(--surface);}
+    .tbl td:first-child{font-family:'SF Mono',monospace;color:var(--accent);white-space:nowrap;}
+
+    /* ── CHEATSHEET ── */
+    .cs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;margin:20px 0;}
+    .cs-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+    .cs-head{background:var(--surface2);padding:9px 14px;font-size:11px;font-weight:700;
+      text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);
+      color:var(--text-muted);}
+    .cs-card table{width:100%;border-collapse:collapse;font-size:12px;}
+    .cs-card td{padding:6px 14px;border-bottom:1px solid var(--border);}
+    .cs-card td:first-child{font-family:monospace;color:var(--accent);font-size:11px;white-space:nowrap;}
+    .cs-card td:last-child{color:var(--text-muted);}
+    .cs-card tr:last-child td{border-bottom:none;}
+
+    /* ── DIVIDER / FOOTER ── */
+    hr{border:none;border-top:1px solid var(--border);margin:40px 0;}
+    .finish{text-align:center;padding:48px 24px;background:var(--surface);
+      border-radius:12px;border:1px solid var(--border);}
+    .finish .trophy{font-size:64px;margin-bottom:16px;}
+
+    /* ── HAMBURGER / MOBILE ── */
+    .hamburger{display:none;position:fixed;top:14px;left:14px;z-index:200;
+      background:var(--surface);border:1px solid var(--border);border-radius:6px;
+      padding:8px 12px;cursor:pointer;font-size:16px;}
+    @media(max-width:800px){
+      .hamburger{display:block;}
+      #sidebar{transform:translateX(-100%);transition:transform .2s;}
+      #sidebar.open{transform:translateX(0);}
+      #main{margin-left:0;padding:64px 20px 60px;}
+      .hero h1{font-size:30px;}
+      .stats{gap:20px;}
+    }
+
+    /* ── CONFLICT VISUAL ── */
+    .conflict-block{font-family:'SF Mono',monospace;font-size:13px;border-radius:8px;
+      overflow:hidden;margin:12px 0 20px;}
+    .cb-yours{background:rgba(63,185,80,.15);padding:12px 16px;border-left:3px solid var(--green);}
+    .cb-sep{background:var(--surface2);padding:6px 16px;color:var(--text-muted);font-size:12px;}
+    .cb-theirs{background:rgba(248,81,73,.12);padding:12px 16px;border-left:3px solid var(--red);}
+    .cb-end{background:var(--surface2);padding:6px 16px;color:var(--text-muted);font-size:12px;}
+
+    /* ── LANDING PAGE ── */
+    .landing-hero{position:relative;overflow:hidden;text-align:center;
+      padding:64px 40px 56px;border-bottom:1px solid var(--border);margin-bottom:0;}
+    #heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.18;pointer-events:none;}
+    .landing-hero .inner{position:relative;z-index:1;}
+    .hero-pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface);
+      border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;
+      color:var(--text-muted);margin-bottom:20px;}
+    .landing-hero h1{font-size:48px;font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:14px;}
+    .landing-hero h1 .ac{color:var(--accent);}
+    .landing-hero .sub{font-size:17px;color:var(--text-muted);max-width:460px;margin:0 auto 32px;}
+    .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;}
+    .btn-primary{background:var(--accent);color:#fff;border:none;border-radius:8px;
+      padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+    .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+    .btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border);
+      border-radius:8px;padding:10px 20px;font-size:14px;cursor:pointer;transition:all .15s;}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+    .hero-stats{display:flex;justify-content:center;gap:48px;}
+    .hero-stats .stat .n{font-size:30px;font-weight:800;color:var(--accent);}
+    .hero-stats .stat .l{font-size:12px;color:var(--text-muted);margin-top:2px;}
+
+    /* ── WHY CARDS ── */
+    .why-section{padding:40px 0 32px;border-bottom:1px solid var(--border);margin-bottom:0;}
+    .section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+      color:var(--text-muted);margin-bottom:16px;}
+    .why-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+    .why-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+      padding:20px;text-align:center;}
+    .why-card .wc-icon{font-size:28px;margin-bottom:10px;}
+    .why-card h4{font-size:14px;font-weight:700;margin-bottom:6px;}
+    .why-card p{font-size:13px;color:var(--text-muted);line-height:1.5;}
+
+    /* ── LEARNING PATH ── */
+    .path-section{padding:36px 0 32px;border-bottom:1px solid var(--border);margin-bottom:0;}
+    .path-svg-wrap{overflow-x:auto;padding:8px 0;}
+
+    /* ── MODULE CARDS ── */
+    .cards-section{padding:36px 0 40px;border-bottom:1px solid var(--border);margin-bottom:0;}
+    .mod-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+    .mod-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+      overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;
+      display:flex;flex-direction:column;}
+    .mod-card:hover{transform:translateY(-4px);border-color:var(--accent);
+      box-shadow:0 8px 32px rgba(88,166,255,.15);}
+    .mod-card-top{height:5px;width:100%;}
+    .mod-card-top.b{background:linear-gradient(90deg,var(--green),#57ff99);}
+    .mod-card-top.i{background:linear-gradient(90deg,var(--yellow),#ffcc00);}
+    .mod-card-top.a{background:linear-gradient(90deg,var(--red),#ff7b72);}
+    .mod-card-top.r{background:linear-gradient(90deg,var(--purple),#d8a2ff);}
+    .mod-card-body{padding:18px 18px 14px;flex:1;display:flex;flex-direction:column;}
+    .mod-card-icon{font-size:28px;margin-bottom:8px;}
+    .mod-card-num{font-size:10px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.08em;color:var(--text-muted);margin-bottom:3px;}
+    .mod-card h3{font-size:15px;font-weight:700;margin-bottom:10px;}
+    .mod-card-preview{list-style:none;padding:0;margin:0 0 12px;flex:1;}
+    .mod-card-preview li{font-size:12px;color:var(--text-muted);padding:3px 0;
+      display:flex;align-items:center;gap:6px;}
+    .mod-card-preview li::before{content:'→';color:var(--accent);font-size:10px;}
+    .mod-card-mini{margin:8px 0 12px;opacity:.7;}
+    .mod-card-footer{display:flex;align-items:center;justify-content:space-between;
+      padding-top:10px;border-top:1px solid var(--border);}
+    .mod-card-badges{display:flex;gap:6px;}
+    .mod-card .go{font-size:12px;color:var(--accent);font-weight:600;}
+
+    /* ── ER ROOM TEASER ── */
+    .er-teaser{background:linear-gradient(135deg,rgba(248,81,73,.08),rgba(248,81,73,.04));
+      border:1px solid rgba(248,81,73,.3);border-radius:10px;padding:20px 24px;
+      margin:32px 0 0;display:flex;align-items:center;gap:20px;cursor:pointer;
+      transition:border-color .15s;}
+    .er-teaser:hover{border-color:var(--red);}
+    .er-teaser-icon{font-size:36px;flex-shrink:0;}
+    .er-teaser h3{font-size:16px;font-weight:700;margin-bottom:4px;}
+    .er-teaser p{font-size:13px;color:var(--text-muted);}
+    .er-teaser .er-go{margin-left:auto;font-size:22px;color:var(--red);flex-shrink:0;}
+
+    /* ── DIAGRAMS ── */
+    .diagram-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+      margin:18px 0 24px;overflow:hidden;}
+    .diagram-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+      color:var(--text-muted);background:var(--surface2);padding:6px 14px;
+      border-bottom:1px solid var(--border);}
+    .diagram-inner{padding:20px;}
+
+    /* Before/After */
+    .before-after{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+    .ba-panel{padding:16px 18px;}
+    .ba-panel.before{background:rgba(248,81,73,.06);border-right:1px solid var(--border);}
+    .ba-panel.after{background:rgba(63,185,80,.06);}
+    .ba-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+      margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+    .ba-panel.before .ba-title{color:var(--red);}
+    .ba-panel.after .ba-title{color:var(--green);}
+    .ba-files{font-family:'SF Mono',monospace;font-size:12px;line-height:2;color:var(--text-muted);}
+    .ba-files .fn-bad{color:var(--red);}
+    .ba-files .fn-ok{color:var(--green);}
+    .ba-files .fn-dim{color:var(--text-muted);}
+    .ba-caption{font-size:11px;color:var(--text-muted);margin-top:10px;font-style:italic;}
+
+    /* Staging Machine */
+    .staging-machine{display:flex;align-items:center;gap:0;padding:8px 0;}
+    .stage-zone{flex:1;background:var(--surface2);border:1px solid var(--border);
+      border-radius:8px;padding:14px 12px;text-align:center;}
+    .stage-zone .sz-icon{font-size:24px;margin-bottom:6px;}
+    .stage-zone .sz-name{font-size:11px;font-weight:700;color:var(--text-muted);
+      text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+    .stage-zone .sz-files{font-size:11px;color:var(--text-muted);}
+    .stage-arrow{flex-shrink:0;padding:0 12px;text-align:center;}
+    .stage-arrow .sa-cmd{font-family:'SF Mono',monospace;font-size:10px;color:var(--accent);
+      display:block;margin-bottom:4px;white-space:nowrap;}
+    .stage-arrow .sa-arr{font-size:18px;color:var(--accent);}
+
+    /* Push/Pull Animation */
+    .pushpull-wrap{display:flex;align-items:center;justify-content:center;
+      gap:0;padding:12px 0;position:relative;}
+    .pp-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+      padding:14px 18px;text-align:center;min-width:120px;}
+    .pp-box .ppb-icon{font-size:24px;margin-bottom:4px;}
+    .pp-box .ppb-label{font-size:12px;font-weight:600;}
+    .pp-box .ppb-sub{font-size:10px;color:var(--text-muted);margin-top:2px;}
+    .pp-arrows{flex:1;display:flex;flex-direction:column;gap:12px;
+      align-items:center;padding:0 8px;position:relative;}
+    .pp-arrow-row{display:flex;align-items:center;gap:8px;width:100%;}
+    .pp-arrow-line{flex:1;height:2px;position:relative;overflow:visible;}
+    .pp-arrow-line.push-line{background:rgba(88,166,255,.3);}
+    .pp-arrow-line.pull-line{background:rgba(63,185,80,.3);}
+    .pp-cmd{font-family:'SF Mono',monospace;font-size:10px;white-space:nowrap;}
+    .pp-cmd.push{color:var(--accent);}
+    .pp-cmd.pull{color:var(--green);}
+    .pp-packet{width:10px;height:10px;border-radius:50%;position:absolute;top:-4px;}
+    .pp-packet.push{background:var(--accent);animation:packetR 2s linear infinite;}
+    .pp-packet.pull{background:var(--green);animation:packetL 2s linear infinite 1s;}
+    @keyframes packetR{0%{left:0;}100%{left:calc(100% - 10px);}}
+    @keyframes packetL{0%{left:calc(100% - 10px);}100%{left:0;}}
+    .pp-arrowhead{font-size:12px;}
+    .pp-arrowhead.push{color:var(--accent);}
+    .pp-arrowhead.pull{color:var(--green);}
+
+    /* PR Flow */
+    .pr-flow{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:8px 0;}
+    .pr-step{background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+      padding:8px 12px;font-size:12px;text-align:center;white-space:nowrap;}
+    .pr-step .ps-icon{display:block;font-size:16px;margin-bottom:2px;}
+    .pr-step.highlight{background:rgba(88,166,255,.1);border-color:var(--accent);color:var(--accent);}
+    .pr-step.loop{background:rgba(210,153,34,.1);border-color:var(--yellow);color:var(--yellow);}
+    .pr-connector{color:var(--text-muted);font-size:14px;padding:0 2px;}
+    .pr-loop-note{font-size:11px;color:var(--yellow);padding:6px 0 0;width:100%;}
+
+    /* CI/CD Pipeline */
+    .pipeline-wrap{display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 0;}
+    .pl-stage{background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+      padding:10px 12px;text-align:center;min-width:80px;transition:all .3s;flex-shrink:0;}
+    .pl-stage .pls-icon{font-size:18px;margin-bottom:4px;display:block;}
+    .pl-stage .pls-label{font-size:10px;font-weight:600;color:var(--text-muted);}
+    .pl-stage.active{background:rgba(63,185,80,.15);border-color:var(--green);}
+    .pl-stage.active .pls-label{color:var(--green);}
+    .pl-stage.fail{background:rgba(248,81,73,.12);border-color:var(--red);}
+    .pl-stage.fail .pls-label{color:var(--red);}
+    .pl-connector{color:var(--text-muted);padding:0 6px;font-size:14px;flex-shrink:0;}
+    .pl-branch{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+    .pl-run-btn{display:block;margin:12px auto 0;background:var(--green);color:#fff;
+      border:none;border-radius:6px;padding:6px 16px;font-size:12px;cursor:pointer;
+      transition:opacity .15s;}
+    .pl-run-btn:hover{opacity:.8;}
+
+    /* Decision Tree */
+    .dtree-wrap{overflow-x:auto;padding:8px 0;}
+
+    /* ER ROOM ── */
+    .er-room-header{background:linear-gradient(135deg,rgba(248,81,73,.12),rgba(248,81,73,.04));
+      border:1px solid rgba(248,81,73,.25);border-radius:10px;padding:20px 24px;margin-bottom:24px;
+      display:flex;align-items:center;gap:16px;}
+    .er-room-header .er-icon{font-size:40px;flex-shrink:0;}
+    .er-room-header h3{font-size:20px;font-weight:800;margin-bottom:4px;}
+    .er-room-header p{font-size:13px;color:var(--text-muted);}
+    .er-cases{display:flex;flex-direction:column;gap:12px;}
+    .er-case{border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+    .er-case-head{display:flex;align-items:center;gap:12px;padding:12px 16px;
+      cursor:pointer;background:var(--surface);user-select:none;transition:background .15s;}
+    .er-case-head:hover{background:var(--surface2);}
+    .er-case-num{font-size:10px;font-weight:700;color:var(--text-muted);
+      font-family:'SF Mono',monospace;flex-shrink:0;}
+    .er-case-name{font-weight:700;font-size:14px;flex:1;}
+    .severity{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;
+      text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;}
+    .severity.crit{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3);}
+    .severity.mod{background:rgba(210,153,34,.12);color:var(--yellow);border:1px solid rgba(210,153,34,.3);}
+    .severity.min{background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.3);}
+    .er-arr{margin-left:4px;font-size:12px;color:var(--text-muted);transition:transform .2s;}
+    .er-case.open .er-arr{transform:rotate(90deg);}
+    .er-case-body{display:none;padding:16px;border-top:1px solid var(--border);background:var(--bg);}
+    .er-case.open .er-case-body{display:block;}
+    .er-row{display:grid;grid-template-columns:80px 1fr;gap:8px;margin-bottom:10px;font-size:14px;}
+    .er-row-label{font-size:11px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.06em;color:var(--text-muted);padding-top:2px;}
+
+    /* Responsive additions */
+    @media(max-width:900px){
+      .why-cards{grid-template-columns:1fr;}
+      .mod-cards-grid{grid-template-columns:repeat(2,1fr);}
+      .before-after{grid-template-columns:1fr;}
+      .ba-panel.before{border-right:none;border-bottom:1px solid var(--border);}
+    }
+    @media(max-width:600px){
+      .mod-cards-grid{grid-template-columns:1fr;}
+      .landing-hero h1{font-size:32px;}
+      .hero-stats{gap:24px;}
+      .staging-machine{flex-direction:column;}
+      .stage-arrow{transform:rotate(90deg);}
+    }
+
+    /* Keyframes */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+    .mod-card{animation:fadeUp .3s ease both;}
+    .mod-card:nth-child(1){animation-delay:.05s;}
+    .mod-card:nth-child(2){animation-delay:.10s;}
+    .mod-card:nth-child(3){animation-delay:.15s;}
+    .mod-card:nth-child(4){animation-delay:.20s;}
+    .mod-card:nth-child(5){animation-delay:.25s;}
+    .mod-card:nth-child(6){animation-delay:.30s;}
+    .mod-card:nth-child(7){animation-delay:.35s;}
+    .mod-card:nth-child(8){animation-delay:.40s;}
+    .mod-card:nth-child(9){animation-delay:.45s;}
+  </style>
+</head>
+<body>
+
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<nav id="sidebar">
+  <div class="sb-head">
+    <div class="sb-logo"><span>⎇</span> Git &amp; GitHub</div>
+    <div class="sb-sub">GWU Student Guide · 8 Modules</div>
+    <div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+    <div class="prog-label" id="progressLabel">0 of 8 modules complete</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-title">Overview</div>
+    <div class="nav-item" data-target="landing">🏠 Home &amp; Modules</div>
+    <div class="nav-item" data-target="er" style="color:var(--red)">🏥 Git ER Room</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Beginner</div>
+    <div class="nav-item" data-target="m0"><span class="dot b"></span>0 · Core Concepts<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m1"><span class="dot b"></span>1 · Your First Commits<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m2"><span class="dot b"></span>2 · Connect to GitHub<span class="check">✓</span></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Intermediate</div>
+    <div class="nav-item" data-target="m3"><span class="dot i"></span>3 · Branching<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m4"><span class="dot i"></span>4 · Collaboration &amp; PRs<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m5"><span class="dot i"></span>5 · When Things Go Wrong<span class="check">✓</span></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Advanced</div>
+    <div class="nav-item" data-target="er" style="color:rgba(248,81,73,.8)"><span class="dot a"></span>🏥 ER Room</div>
+    <div class="nav-item" data-target="m6"><span class="dot a"></span>6 · GitHub Actions<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m7"><span class="dot a"></span>7 · Advanced Git<span class="check">✓</span></div>
+    <div class="nav-item" data-target="cs"><span class="dot r"></span>Cheat Sheet<span class="check">✓</span></div>
+  </div>
+
+  <div class="sb-foot">
+    <button class="theme-btn" onclick="toggleTheme()">
+      <span id="themeIcon">☀️</span>
+      <span id="themeLabel">Switch to Light Mode</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<main id="main">
+
+<!-- ════════ LANDING PAGE ════════ -->
+<section id="landing">
+
+<!-- HERO -->
+<div class="landing-hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="inner">
+    <div class="hero-pill">🎓 GWU · Spring 2026 · For Students Who Can Code</div>
+    <h1>Git &amp; GitHub<br><span class="ac">From Zero to Pro</span></h1>
+    <p class="sub">Master version control — the one skill every developer needs, regardless of language or field.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="scrollToId('m0')">▶ Start Learning</button>
+      <button class="btn-ghost" onclick="scrollToId('cs')">📋 Cheat Sheet</button>
+      <button class="btn-ghost" onclick="scrollToId('er')" style="border-color:rgba(248,81,73,.4);color:var(--red)">🏥 Git ER Room</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="n">8</div><div class="l">Modules</div></div>
+      <div class="stat"><div class="n">~4h</div><div class="l">Total Time</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">Real Project</div></div>
+      <div class="stat"><div class="n">7</div><div class="l">ER Cases</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY GIT -->
+<div class="why-section">
+  <div class="section-label">Why does this matter?</div>
+  <div class="why-cards">
+    <div class="why-card">
+      <div class="wc-icon">💾</div>
+      <h4>Never Lose Work Again</h4>
+      <p>Every commit is a save point. Break something? Jump back to any moment in your project's history in seconds.</p>
+    </div>
+    <div class="why-card">
+      <div class="wc-icon">🌐</div>
+      <h4>Your GitHub = Your Resume</h4>
+      <p>Recruiters look at GitHub profiles. Active, well-structured repos demonstrate real-world skills better than a bullet point on paper.</p>
+    </div>
+    <div class="why-card">
+      <div class="wc-icon">🤝</div>
+      <h4>Work Like a Pro</h4>
+      <p>Every tech company — from startups to FAANG — uses Git. Learning it now means zero friction when you join a team.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LEARNING PATH -->
+<div class="path-section">
+  <div class="section-label">Your Learning Path</div>
+  <div class="path-svg-wrap">
+    <svg viewBox="0 0 720 100" width="720" height="100" style="max-width:100%">
+      <defs>
+        <marker id="ph" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#30363d"/>
+        </marker>
+      </defs>
+      <!-- Connecting line -->
+      <line x1="40" y1="42" x2="680" y2="42" stroke="#30363d" stroke-width="2" marker-end="url(#ph)"/>
+      <!-- Beginner zone -->
+      <rect x="10" y="70" width="220" height="20" rx="4" fill="rgba(63,185,80,.1)" stroke="rgba(63,185,80,.3)" stroke-width="1"/>
+      <text x="120" y="84" text-anchor="middle" fill="#3fb950" font-size="9" font-weight="700">BEGINNER</text>
+      <!-- Intermediate zone -->
+      <rect x="240" y="70" width="240" height="20" rx="4" fill="rgba(210,153,34,.1)" stroke="rgba(210,153,34,.3)" stroke-width="1"/>
+      <text x="360" y="84" text-anchor="middle" fill="#d29922" font-size="9" font-weight="700">INTERMEDIATE</text>
+      <!-- Advanced zone -->
+      <rect x="490" y="70" width="210" height="20" rx="4" fill="rgba(248,81,73,.08)" stroke="rgba(248,81,73,.25)" stroke-width="1"/>
+      <text x="595" y="84" text-anchor="middle" fill="#f85149" font-size="9" font-weight="700">ADVANCED</text>
+      <!-- Module stops -->
+      <circle cx="40"  cy="42" r="16" fill="#161b22" stroke="#3fb950" stroke-width="2" style="cursor:pointer" onclick="scrollToId('m0')"/>
+      <text x="40"  y="46" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="700" style="cursor:pointer" onclick="scrollToId('m0')">M0</text>
+      <text x="40"  y="22" text-anchor="middle" fill="#8b949e" font-size="9">Setup</text>
+
+      <circle cx="130" cy="42" r="16" fill="#161b22" stroke="#3fb950" stroke-width="2" style="cursor:pointer" onclick="scrollToId('m1')"/>
+      <text x="130" y="46" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="700" style="cursor:pointer" onclick="scrollToId('m1')">M1</text>
+      <text x="130" y="22" text-anchor="middle" fill="#8b949e" font-size="9">Commits</text>
+
+      <circle cx="220" cy="42" r="16" fill="#161b22" stroke="#3fb950" stroke-width="2" style="cursor:pointer" onclick="scrollToId('m2')"/>
+      <text x="220" y="46" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="700" style="cursor:pointer" onclick="scrollToId('m2')">M2</text>
+      <text x="220" y="22" text-anchor="middle" fill="#8b949e" font-size="9">GitHub</text>
+
+      <circle cx="320" cy="42" r="16" fill="#161b22" stroke="#d29922" stroke-width="2" style="cursor:pointer" onclick="scrollToId('m3')"/>
+      <text x="320" y="46" text-anchor="middle" fill="#d29922" font-size="10" font-weight="700" style="cursor:pointer" onclick="scrollToId('m3')">M3</text>
+      <text x="320" y="22" text-anchor="middle" fill="#8b949e" font-size="9">Branching</text>
+
+      <circle cx="410" cy="42" r="16" fill="#161b22" stroke="#d29922" stroke-width="2" style="cursor:pointer" onclick="scrollToId('m4')"/>
+      <text x="410" y="46" text-anchor="middle" fill="#d29922" font-size="10" font-weight="700" style="cursor:pointer" onclick="scrollToId('m4')">M4</text>
+      <text x="410" y="22" text-anchor="middle" fill="#8b949e" font-size="9">PRs</text>
+
+      <circle cx="500" cy="42" r="16" fill="#161b22" stroke="#d29922" stroke-width="2" style="cursor:pointer" onclick="scrollToId('m5')"/>
+      <text x="500" y="46" text-anchor="middle" fill="#d29922" font-size="10" font-weight="700" style="cursor:pointer" onclick="scrollToId('m5')">M5</text>
+      <text x="500" y="22" text-anchor="middle" fill="#8b949e" font-size="9">Fixes</text>
+
+      <circle cx="585" cy="42" r="16" fill="#161b22" stroke="#f85149" stroke-width="2" style="cursor:pointer" onclick="scrollToId('m6')"/>
+      <text x="585" y="46" text-anchor="middle" fill="#f85149" font-size="10" font-weight="700" style="cursor:pointer" onclick="scrollToId('m6')">M6</text>
+      <text x="585" y="22" text-anchor="middle" fill="#8b949e" font-size="9">Actions</text>
+
+      <circle cx="670" cy="42" r="16" fill="#161b22" stroke="#f85149" stroke-width="2" style="cursor:pointer" onclick="scrollToId('m7')"/>
+      <text x="670" y="46" text-anchor="middle" fill="#f85149" font-size="10" font-weight="700" style="cursor:pointer" onclick="scrollToId('m7')">M7</text>
+      <text x="670" y="22" text-anchor="middle" fill="#8b949e" font-size="9">Advanced</text>
+    </svg>
+  </div>
+</div>
+
+<!-- MODULE CARDS -->
+<div class="cards-section">
+  <div class="section-label">All Modules — Click to Jump In</div>
+  <div class="mod-cards-grid">
+
+    <div class="mod-card" onclick="scrollToId('m0')">
+      <div class="mod-card-top b"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🧭</div>
+        <div class="mod-card-num">Module 0</div>
+        <h3>Core Concepts &amp; Setup</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 36" width="120" height="36">
+          <line x1="10" y1="18" x2="110" y2="18" stroke="#3fb950" stroke-width="1.5"/>
+          <circle cx="30" cy="18" r="6" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+          <circle cx="65" cy="18" r="6" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+          <circle cx="100" cy="18" r="6" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="30" y="10" text-anchor="middle" fill="#8b949e" font-size="7">C1</text>
+          <text x="65" y="10" text-anchor="middle" fill="#8b949e" font-size="7">C2</text>
+          <text x="100" y="10" text-anchor="middle" fill="#8b949e" font-size="7">C3</text>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>Git vs GitHub — what's the difference</li>
+          <li>Install and configure Git</li>
+          <li>Key vocabulary explained simply</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 20m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m1')">
+      <div class="mod-card-top b"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">📦</div>
+        <div class="mod-card-num">Module 1</div>
+        <h3>Your First Commits</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 36" width="120" height="36">
+          <rect x="4" y="8" width="28" height="20" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="18" y="22" text-anchor="middle" fill="#8b949e" font-size="7">Work</text>
+          <line x1="34" y1="18" x2="44" y2="18" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ph)"/>
+          <text x="39" y="13" text-anchor="middle" fill="#58a6ff" font-size="6">add</text>
+          <rect x="46" y="8" width="28" height="20" rx="3" fill="#161b22" stroke="#58a6ff" stroke-width="1"/>
+          <text x="60" y="22" text-anchor="middle" fill="#58a6ff" font-size="7">Stage</text>
+          <line x1="76" y1="18" x2="86" y2="18" stroke="#3fb950" stroke-width="1.5" marker-end="url(#ph)"/>
+          <text x="81" y="13" text-anchor="middle" fill="#3fb950" font-size="6">commit</text>
+          <rect x="88" y="8" width="28" height="20" rx="3" fill="#161b22" stroke="#3fb950" stroke-width="1"/>
+          <text x="102" y="22" text-anchor="middle" fill="#3fb950" font-size="7">Repo</text>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>git init, add, commit explained</li>
+          <li>The staging area — why it exists</li>
+          <li>Reading git log and git status</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 30m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m2')">
+      <div class="mod-card-top b"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">☁️</div>
+        <div class="mod-card-num">Module 2</div>
+        <h3>Connect to GitHub</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 36" width="120" height="36">
+          <rect x="4" y="8" width="36" height="20" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="22" y="22" text-anchor="middle" fill="#8b949e" font-size="8">💻</text>
+          <line x1="43" y1="14" x2="76" y2="14" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="60" y="10" text-anchor="middle" fill="#58a6ff" font-size="6">push</text>
+          <line x1="76" y1="24" x2="43" y2="24" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="60" y="33" text-anchor="middle" fill="#3fb950" font-size="6">pull</text>
+          <rect x="79" y="8" width="36" height="20" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="97" y="22" text-anchor="middle" fill="#8b949e" font-size="8">☁️</text>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>Push your repo to GitHub</li>
+          <li>git push, pull, clone, fetch</li>
+          <li>Authentication with PAT &amp; SSH</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 30m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m3')">
+      <div class="mod-card-top i"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🌿</div>
+        <div class="mod-card-num">Module 3</div>
+        <h3>Branching</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 44" width="120" height="44">
+          <line x1="10" y1="16" x2="110" y2="16" stroke="#58a6ff" stroke-width="1.5"/>
+          <path d="M40,16 Q50,16 55,30" stroke="#3fb950" stroke-width="1.5" fill="none"/>
+          <line x1="55" y1="30" x2="75" y2="30" stroke="#3fb950" stroke-width="1.5"/>
+          <path d="M75,30 Q80,30 85,16" stroke="#3fb950" stroke-width="1.5" fill="none"/>
+          <circle cx="20" cy="16" r="5" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+          <circle cx="40" cy="16" r="5" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+          <circle cx="55" cy="30" r="5" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+          <circle cx="75" cy="30" r="5" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+          <circle cx="85" cy="16" r="5" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+          <circle cx="105" cy="16" r="5" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>Create and switch branches</li>
+          <li>Merge branches together</li>
+          <li>Resolve merge conflicts step-by-step</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 45m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m4')">
+      <div class="mod-card-top i"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🤝</div>
+        <div class="mod-card-num">Module 4</div>
+        <h3>Collaboration &amp; PRs</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 36" width="120" height="36">
+          <rect x="4" y="10" width="30" height="16" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="19" y="22" text-anchor="middle" fill="#8b949e" font-size="7">Fork</text>
+          <line x1="36" y1="18" x2="50" y2="18" stroke="#58a6ff" stroke-width="1"/>
+          <rect x="52" y="10" width="30" height="16" rx="3" fill="#161b22" stroke="#58a6ff" stroke-width="1"/>
+          <text x="67" y="22" text-anchor="middle" fill="#58a6ff" font-size="7">PR</text>
+          <line x1="84" y1="18" x2="98" y2="18" stroke="#3fb950" stroke-width="1"/>
+          <rect x="100" y="10" width="16" height="16" rx="3" fill="#161b22" stroke="#3fb950" stroke-width="1"/>
+          <text x="108" y="22" text-anchor="middle" fill="#3fb950" font-size="9">✓</text>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>Fork vs clone explained</li>
+          <li>Open and review Pull Requests</li>
+          <li>Issues, code review best practices</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 40m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m5')">
+      <div class="mod-card-top i"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🔧</div>
+        <div class="mod-card-num">Module 5</div>
+        <h3>When Things Go Wrong</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 36" width="120" height="36">
+          <polygon points="60,4 110,32 10,32" fill="rgba(248,81,73,.12)" stroke="#f85149" stroke-width="1.5"/>
+          <text x="60" y="28" text-anchor="middle" fill="#f85149" font-size="14" font-weight="700">!</text>
+          <text x="60" y="15" text-anchor="middle" fill="#f85149" font-size="8" font-weight="700">⚠</text>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>Undo changes safely (restore, reset, revert)</li>
+          <li>.gitignore — never commit secrets</li>
+          <li>Fix: push rejected, detached HEAD, and more</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 40m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m6')">
+      <div class="mod-card-top a"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">⚡</div>
+        <div class="mod-card-num">Module 6</div>
+        <h3>GitHub Actions</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 36" width="120" height="36">
+          <rect x="4" y="10" width="22" height="16" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="15" y="22" text-anchor="middle" fill="#8b949e" font-size="7">Code</text>
+          <line x1="28" y1="18" x2="36" y2="18" stroke="#30363d" stroke-width="1"/>
+          <rect x="38" y="10" width="22" height="16" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="49" y="22" text-anchor="middle" fill="#8b949e" font-size="7">Test</text>
+          <line x1="62" y1="18" x2="70" y2="18" stroke="#30363d" stroke-width="1"/>
+          <rect x="72" y="10" width="22" height="16" rx="3" fill="#161b22" stroke="#3fb950" stroke-width="1"/>
+          <text x="83" y="22" text-anchor="middle" fill="#3fb950" font-size="7">✓ CI</text>
+          <line x1="96" y1="18" x2="104" y2="18" stroke="#3fb950" stroke-width="1"/>
+          <rect x="106" y="10" width="10" height="16" rx="2" fill="rgba(63,185,80,.2)" stroke="#3fb950" stroke-width="1"/>
+          <text x="111" y="22" text-anchor="middle" fill="#3fb950" font-size="8">🚀</text>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>What CI/CD means and why it matters</li>
+          <li>Write your first workflow YAML</li>
+          <li>Auto-run tests on every push</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 45m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('m7')">
+      <div class="mod-card-top a"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">🚀</div>
+        <div class="mod-card-num">Module 7</div>
+        <h3>Advanced Git</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 44" width="120" height="44">
+          <!-- merge side -->
+          <line x1="8" y1="12" x2="52" y2="12" stroke="#58a6ff" stroke-width="1.5"/>
+          <path d="M24,12 Q30,12 34,24" stroke="#3fb950" stroke-width="1.5" fill="none"/>
+          <line x1="34" y1="24" x2="44" y2="24" stroke="#3fb950" stroke-width="1.5"/>
+          <path d="M44,24 Q48,24 52,12" stroke="#3fb950" stroke-width="1.5" fill="none"/>
+          <circle cx="52" cy="12" r="4" fill="#ffd700" stroke="#ffd700" stroke-width="1"/>
+          <text x="30" y="38" text-anchor="middle" fill="#8b949e" font-size="7">merge</text>
+          <!-- rebase side -->
+          <line x1="68" y1="18" x2="112" y2="18" stroke="#58a6ff" stroke-width="1.5"/>
+          <circle cx="78" cy="18" r="4" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+          <circle cx="92" cy="18" r="4" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+          <circle cx="106" cy="18" r="4" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="92" y="38" text-anchor="middle" fill="#8b949e" font-size="7">rebase</text>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>git stash, rebase, cherry-pick</li>
+          <li>Tags, releases, aliases</li>
+          <li>git bisect — find the commit that broke things</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40m</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-card" onclick="scrollToId('cs')">
+      <div class="mod-card-top r"></div>
+      <div class="mod-card-body">
+        <div class="mod-card-icon">📋</div>
+        <div class="mod-card-num">Reference</div>
+        <h3>Cheat Sheet</h3>
+        <svg class="mod-card-mini" viewBox="0 0 120 36" width="120" height="36">
+          <rect x="10" y="6" width="100" height="24" rx="3" fill="#161b22" stroke="#bc8cff" stroke-width="1"/>
+          <line x1="20" y1="14" x2="60" y2="14" stroke="#bc8cff" stroke-width="1"/>
+          <line x1="20" y1="20" x2="75" y2="20" stroke="#30363d" stroke-width="1"/>
+          <line x1="20" y1="26" x2="50" y2="26" stroke="#30363d" stroke-width="1"/>
+        </svg>
+        <ul class="mod-card-preview">
+          <li>Every command, organized by category</li>
+          <li>Copy-to-clipboard on each command</li>
+          <li>Quick reference during any project</li>
+        </ul>
+        <div class="mod-card-footer">
+          <div class="mod-card-badges"><span class="badge" style="background:rgba(188,140,255,.12);color:var(--purple);border:1px solid rgba(188,140,255,.3);">Reference</span></div>
+          <span class="mod-card go">Go →</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end grid -->
+
+  <!-- ER Room Teaser -->
+  <div class="er-teaser" onclick="scrollToId('er')">
+    <div class="er-teaser-icon">🏥</div>
+    <div>
+      <h3>Git Emergency Room</h3>
+      <p>7 real disasters students cause — with step-by-step recovery. From "I committed my password" to "I force-pushed to main." No judgment, just fixes.</p>
+    </div>
+    <div class="er-go">→</div>
+  </div>
+
+</div><!-- end cards-section -->
+</section><!-- end landing -->
+
+
+<!-- ════════ MODULE 0 ════════ -->
+<section class="module" id="m0">
+  <div class="mod-head">
+    <div class="mod-icon">🧭</div>
+    <div class="mod-meta">
+      <div class="badges">
+        <span class="badge b">Beginner</span>
+        <span class="badge t">⏱ 20 min</span>
+      </div>
+      <h2>Module 0 · Core Concepts &amp; Setup</h2>
+    </div>
+  </div>
+
+  <h3>The Problem Git Solves</h3>
+  <div class="diagram-wrap">
+    <div class="diagram-label">Before Git vs After Git — you've done the left side before</div>
+    <div class="before-after">
+      <div class="ba-panel before">
+        <div class="ba-title">😰 Without Git</div>
+        <div class="ba-files">
+          <div>📁 my-essay/</div>
+          <div class="fn-bad">├── essay_v1.docx</div>
+          <div class="fn-bad">├── essay_v2_FINAL.docx</div>
+          <div class="fn-bad">├── essay_v2_FINAL_real.docx</div>
+          <div class="fn-bad">├── essay_SEND_THIS_ONE.docx</div>
+          <div class="fn-bad">├── essay_NO_THIS_ONE.docx</div>
+          <div class="fn-bad">└── essay_OK_THIS_IS_IT.docx</div>
+        </div>
+        <div class="ba-caption">Which file is the latest? Nobody knows.</div>
+      </div>
+      <div class="ba-panel after">
+        <div class="ba-title">✅ With Git</div>
+        <div class="ba-files">
+          <div class="fn-ok">● a3f9c12  Fix conclusion paragraph  <span class="fn-dim">2h ago</span></div>
+          <div class="fn-ok">● 2d3e4f8  Add citations section     <span class="fn-dim">yesterday</span></div>
+          <div class="fn-ok">● 1a2b3c4  Write introduction        <span class="fn-dim">Mon</span></div>
+          <div class="fn-ok">● 8c7d6e5  Outline structure         <span class="fn-dim">last week</span></div>
+          <div>&nbsp;</div>
+          <div class="fn-dim">Jump to any version instantly.</div>
+        </div>
+        <div class="ba-caption">One folder. Clean history. No guessing.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>What is Git?</h3>
+  <div class="concept">
+    <div class="ct">Analogy</div>
+    Think of Git as <strong>save points in a video game</strong>. Every time you
+    <em>commit</em>, you take a snapshot of your code. If something breaks, you can
+    jump back to any save point instantly. Git stores all these snapshots locally on
+    your machine — no internet needed.
+  </div>
+
+  <h3>Git vs GitHub — not the same thing</h3>
+  <div class="graph-wrap">
+    <svg width="500" height="120" viewBox="0 0 500 120">
+      <defs>
+        <marker id="arrowR" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#58a6ff"/>
+        </marker>
+        <marker id="arrowL" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto">
+          <path d="M8,0 L0,3 L8,6 Z" fill="#3fb950"/>
+        </marker>
+      </defs>
+      <!-- Local box -->
+      <rect x="10" y="20" width="170" height="80" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+      <text x="95" y="48" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">Your Computer</text>
+      <text x="95" y="68" text-anchor="middle" fill="#58a6ff" font-size="11">git repository</text>
+      <text x="95" y="86" text-anchor="middle" fill="#8b949e" font-size="10">(local — offline)</text>
+      <!-- GitHub box -->
+      <rect x="320" y="20" width="170" height="80" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+      <text x="405" y="48" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">GitHub</text>
+      <text x="405" y="68" text-anchor="middle" fill="#3fb950" font-size="11">remote repository</text>
+      <text x="405" y="86" text-anchor="middle" fill="#8b949e" font-size="10">(cloud — online)</text>
+      <!-- Push arrow -->
+      <line x1="185" y1="52" x2="315" y2="52" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrowR)"/>
+      <text x="250" y="44" text-anchor="middle" fill="#58a6ff" font-size="10">git push</text>
+      <!-- Pull arrow -->
+      <line x1="315" y1="72" x2="185" y2="72" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrowL)"/>
+      <text x="250" y="88" text-anchor="middle" fill="#3fb950" font-size="10">git pull / clone</text>
+    </svg>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Git</th><th>GitHub</th></tr>
+    <tr><td>Software on your computer</td><td>A website (github.com)</td></tr>
+    <tr><td>Tracks history of your files</td><td>Hosts your repos online</td></tr>
+    <tr><td>Works 100% offline</td><td>Enables collaboration &amp; sharing</td></tr>
+    <tr><td>Free, open-source tool</td><td>Free plan + paid tiers</td></tr>
+  </table>
+
+  <h3>Key Vocabulary</h3>
+  <table class="tbl">
+    <tr><th>Term</th><th>Plain English</th></tr>
+    <tr><td>repository (repo)</td><td>A folder Git is tracking — contains your project + all its history</td></tr>
+    <tr><td>commit</td><td>A saved snapshot of your project at one moment in time</td></tr>
+    <tr><td>branch</td><td>A parallel version of your code — like a separate timeline</td></tr>
+    <tr><td>merge</td><td>Combining two branches back together</td></tr>
+    <tr><td>remote</td><td>A copy of your repo stored somewhere else (usually GitHub)</td></tr>
+    <tr><td>clone</td><td>Download a remote repo to your computer for the first time</td></tr>
+    <tr><td>fork</td><td>Copy someone else's repo into your own GitHub account</td></tr>
+    <tr><td>pull request (PR)</td><td>A proposal to merge your changes into someone else's branch</td></tr>
+    <tr><td>HEAD</td><td>A pointer to the commit you're currently on</td></tr>
+  </table>
+
+  <h3>Install &amp; Configure Git</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Install Git</strong>
+        <div class="code-wrap">
+          <div class="code-label">macOS (Terminal)</div>
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git --version   <span class="c"># if not found, macOS will prompt you to install</span>
+<span class="c"># OR install via Homebrew:</span>
+brew install git</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-label">Windows</div>
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="c"># Download and install from: https://git-scm.com/downloads
+# Opens "Git Bash" — use that as your terminal</span></pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-label">Linux (Ubuntu/Debian)</div>
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>sudo apt update &amp;&amp; sudo apt install git</pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Tell Git who you are — do this once</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git config --global user.name  <span class="str">"Your Name"</span>
+git config --global user.email <span class="str">"you@gwu.edu"</span>
+git config --global init.defaultBranch main   <span class="c"># modern default</span></pre>
+        </div>
+        <div class="callout info"><div class="callout-icon">ℹ️</div>
+          <div>This info is attached to every commit you make. Use the same email as your GitHub account.</div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Verify everything is set</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git config --list</pre>
+        </div>
+        <div class="terminal">
+          <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="t-title">Terminal</span></div>
+          <div class="t-body">
+            <div><span class="tp">$ </span><span class="tc">git config --list</span></div>
+            <div class="to">user.name=Your Name</div>
+            <div class="to">user.email=you@gwu.edu</div>
+            <div class="to">init.defaultbranch=main</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head">
+      <span class="task-tag">🎯 Project Task</span>
+      <span class="title">Module 0 Setup</span>
+    </div>
+    <ul class="checklist" id="tasks-m0">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Install Git and open a terminal</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run <code>git config --global user.name "Your Name"</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run <code>git config --global user.email "you@gwu.edu"</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a free account at <strong>github.com</strong></span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 1 ════════ -->
+<section class="module" id="m1">
+  <div class="mod-head">
+    <div class="mod-icon">📦</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 30 min</span></div>
+      <h2>Module 1 · Your First Commits</h2>
+    </div>
+  </div>
+
+  <h3>The Three Areas of Git</h3>
+  <div class="diagram-wrap">
+    <div class="diagram-label">The Staging Machine — how files travel to become commits</div>
+    <div class="diagram-inner">
+      <div class="staging-machine">
+        <div class="stage-zone" style="border-color:var(--border)">
+          <div class="sz-icon">📝</div>
+          <div class="sz-name">Working Directory</div>
+          <div class="sz-files">your edited files<br>git sees them as "modified"</div>
+        </div>
+        <div class="stage-arrow">
+          <span class="sa-cmd">git add</span>
+          <span class="sa-arr">→</span>
+        </div>
+        <div class="stage-zone" style="border-color:var(--accent)">
+          <div class="sz-icon">📋</div>
+          <div class="sz-name">Staging Area</div>
+          <div class="sz-files">files you chose<br>ready to be saved</div>
+        </div>
+        <div class="stage-arrow">
+          <span class="sa-cmd">git commit</span>
+          <span class="sa-arr">→</span>
+        </div>
+        <div class="stage-zone" style="border-color:var(--green)">
+          <div class="sz-icon">🗄️</div>
+          <div class="sz-name">Repository</div>
+          <div class="sz-files">permanent snapshot<br>in Git history forever</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:12px;text-align:center;">
+        Staging lets you choose <em>exactly</em> which changes go into a commit — even from the same file.
+      </p>
+    </div>
+  </div>
+  <div class="concept">
+    <div class="ct">Mental Model — The Post Office</div>
+    <strong>Working directory</strong> — your desk, files you're editing right now.<br>
+    <strong>Staging area</strong> — a box on the desk, files you've put in to mail.<br>
+    <strong>Repository</strong> — the post office archive, files that have been sent &amp; recorded forever.
+  </div>
+
+  <div class="graph-wrap">
+    <svg width="520" height="80" viewBox="0 0 520 80">
+      <defs>
+        <marker id="a2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#58a6ff"/>
+        </marker>
+      </defs>
+      <rect x="10" y="15" width="140" height="50" rx="6" fill="#161b22" stroke="#30363d"/>
+      <text x="80" y="37" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Working Dir</text>
+      <text x="80" y="53" text-anchor="middle" fill="#8b949e" font-size="10">your edited files</text>
+
+      <rect x="190" y="15" width="140" height="50" rx="6" fill="#161b22" stroke="#30363d"/>
+      <text x="260" y="37" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Staging Area</text>
+      <text x="260" y="53" text-anchor="middle" fill="#8b949e" font-size="10">files ready to commit</text>
+
+      <rect x="370" y="15" width="140" height="50" rx="6" fill="#161b22" stroke="#30363d"/>
+      <text x="440" y="37" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Repository</text>
+      <text x="440" y="53" text-anchor="middle" fill="#8b949e" font-size="10">permanent history</text>
+
+      <line x1="152" y1="40" x2="186" y2="40" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+      <text x="169" y="32" text-anchor="middle" fill="#58a6ff" font-size="9">git add</text>
+      <line x1="332" y1="40" x2="366" y2="40" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+      <text x="349" y="32" text-anchor="middle" fill="#58a6ff" font-size="9">git commit</text>
+    </svg>
+  </div>
+
+  <h3>Core Commands</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Create a new project folder and initialize Git</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>mkdir my-tech-wiki
+cd my-tech-wiki
+git init</pre>
+        </div>
+        <div class="terminal">
+          <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="t-title">Terminal</span></div>
+          <div class="t-body">
+            <div><span class="tp">$ </span><span class="tc">git init</span></div>
+            <div class="to">Initialized empty Git repository in /Users/you/my-tech-wiki/.git/</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);">A hidden <code>.git/</code> folder is created — this is where Git stores all history. Never delete it.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Create your first file</strong>
+        <div class="code-wrap">
+          <div class="code-label">README.md</div>
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button># My Tech Wiki
+
+A personal wiki where I document things I learn about Git and GitHub.
+
+## Topics
+- Git basics
+</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Check status — what has Git noticed?</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git status</pre>
+        </div>
+        <div class="terminal">
+          <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="t-title">Terminal</span></div>
+          <div class="t-body">
+            <div><span class="tp">$ </span><span class="tc">git status</span></div>
+            <div class="to">On branch main</div>
+            <div class="to">Untracked files:</div>
+            <div class="to">  (use "git add &lt;file&gt;..." to include in what will be committed)</div>
+            <div class="te">	README.md</div>
+            <div class="to"></div>
+            <div class="to">nothing added to commit but untracked files present</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);">Red means Git sees the file but is not tracking it yet.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <strong>Stage the file (add it to the box)</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git add README.md       <span class="c"># stage one file</span>
+<span class="c"># OR stage everything in the folder:</span>
+git add .</pre>
+        </div>
+        <div class="callout warn"><div class="callout-icon">⚠️</div>
+          <div><code>git add .</code> stages everything — be careful not to accidentally stage passwords or secrets. We'll set up <code>.gitignore</code> in Module 5.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">5</div>
+      <div class="sb">
+        <strong>Commit — create the save point</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git commit <span class="num">-m</span> <span class="str">"Initial commit: add README"</span></pre>
+        </div>
+        <div class="terminal">
+          <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="t-title">Terminal</span></div>
+          <div class="t-body">
+            <div><span class="tp">$ </span><span class="tc">git commit -m "Initial commit: add README"</span></div>
+            <div class="to">[main (root-commit) a3f9c12] Initial commit: add README</div>
+            <div class="to"> 1 file changed, 6 insertions(+)</div>
+            <div class="to"> create mode 100644 README.md</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">6</div>
+      <div class="sb">
+        <strong>View your history</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git log <span class="num">--oneline</span>   <span class="c"># compact view — one line per commit</span></pre>
+        </div>
+        <div class="terminal">
+          <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="t-title">Terminal</span></div>
+          <div class="t-body">
+            <div><span class="tp">$ </span><span class="tc">git log --oneline</span></div>
+            <div class="to"><span style="color:#f0883e">a3f9c12</span> <span style="color:#58a6ff">(HEAD -&gt; main)</span> Initial commit: add README</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout tip"><div class="callout-icon">💡</div>
+    <div><strong>Write good commit messages.</strong> Use a verb in present tense: <code>"Add login page"</code>, <code>"Fix typo in README"</code>, <code>"Remove unused imports"</code>. Future-you will thank past-you.</div>
+  </div>
+
+  <div class="collapse">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      ⚠️ Common Issues — Module 1<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <p><strong>"Nothing to commit, working tree clean"</strong> — Git sees no changes since the last commit. Edit a file first, then add and commit.</p>
+      <p><strong>"fatal: not a git repository"</strong> — You're in the wrong folder. Run <code>git init</code> first, or <code>cd</code> into your project directory.</p>
+      <p><strong>I forgot to include a file in my last commit</strong> — Stage the file and run:</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git add forgotten-file.txt
+git commit <span class="num">--amend --no-edit</span>   <span class="c"># adds to the LAST commit</span></pre></div>
+      <div class="callout warn"><div class="callout-icon">⚠️</div><div>Only amend commits that haven't been pushed to GitHub yet.</div></div>
+      <p><strong>"Please tell me who you are" error</strong> — Run <code>git config</code> from Module 0 to set your name and email.</p>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head">
+      <span class="task-tag">🎯 Project Task</span>
+      <span class="title">Module 1 — Create my-tech-wiki</span>
+    </div>
+    <ul class="checklist" id="tasks-m1">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a folder called <code>my-tech-wiki</code> and run <code>git init</code> inside it</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a <code>README.md</code> with your name and a one-line description</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Stage and commit it: <code>git add README.md</code> then <code>git commit -m "Initial commit"</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a file <code>git-basics.md</code>, add 3 things you learned, commit it</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run <code>git log --oneline</code> and see your two commits</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 2 ════════ -->
+<section class="module" id="m2">
+  <div class="mod-head">
+    <div class="mod-icon">☁️</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 30 min</span></div>
+      <h2>Module 2 · Connect to GitHub</h2>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">Local ↔ Remote — what lives where</div>
+    <div class="diagram-inner">
+      <div class="pushpull-wrap">
+        <div class="pp-box">
+          <div class="ppb-icon">💻</div>
+          <div class="ppb-label">Your Computer</div>
+          <div class="ppb-sub">local repo</div>
+        </div>
+        <div class="pp-arrows">
+          <div class="pp-arrow-row">
+            <span class="pp-cmd push">git push</span>
+            <div class="pp-arrow-line push-line" style="flex:1;position:relative;">
+              <div class="pp-packet push"></div>
+            </div>
+            <span class="pp-arrowhead push">→</span>
+          </div>
+          <div class="pp-arrow-row" style="flex-direction:row-reverse">
+            <span class="pp-cmd pull">git pull</span>
+            <div class="pp-arrow-line pull-line" style="flex:1;position:relative;">
+              <div class="pp-packet pull"></div>
+            </div>
+            <span class="pp-arrowhead pull" style="transform:rotate(180deg)">→</span>
+          </div>
+        </div>
+        <div class="pp-box">
+          <div class="ppb-icon">☁️</div>
+          <div class="ppb-label">GitHub</div>
+          <div class="ppb-sub">remote repo</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:8px;">
+        <code>git clone</code> = first-time download &nbsp;|&nbsp; <code>git fetch</code> = download without merging yet
+      </p>
+    </div>
+  </div>
+
+  <h3>Push your local repo to GitHub</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Create a new repo on GitHub</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Go to <strong>github.com → "+" → New repository</strong>.<br>
+        Name it <code>my-tech-wiki</code>. Keep it <strong>public</strong>. Do <strong>not</strong> add a README (you already have one).</p>
+        <div class="callout danger"><div class="callout-icon">🚫</div>
+          <div>Do NOT initialize with README, .gitignore, or license when pushing an existing local repo — it will cause a conflict on your first push.</div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Link your local repo to GitHub and push</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="c"># Replace YOUR-USERNAME with your GitHub username</span>
+git remote add origin https://github.com/YOUR-USERNAME/my-tech-wiki.git
+git push <span class="num">-u</span> origin main</pre>
+        </div>
+        <div class="terminal">
+          <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="t-title">Terminal</span></div>
+          <div class="t-body">
+            <div><span class="tp">$ </span><span class="tc">git push -u origin main</span></div>
+            <div class="to">Enumerating objects: 4, done.</div>
+            <div class="to">Writing objects: 100% (4/4), 432 bytes | 432 KiB/s, done.</div>
+            <div class="ok">Branch 'main' set up to track remote branch 'main' from 'origin'.</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);">The <code>-u</code> flag links your local branch to the remote. After this, you can just type <code>git push</code>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Authenticate (first-time push only)</strong>
+        <p style="font-size:14px;color:var(--text-muted);">GitHub no longer accepts your account password. Use a <strong>Personal Access Token (PAT)</strong>:</p>
+        <ol style="font-size:14px;color:var(--text-muted);">
+          <li>Go to GitHub → Settings → Developer Settings → Personal Access Tokens → Tokens (classic)</li>
+          <li>Generate a new token — check the <strong>repo</strong> scope</li>
+          <li>Copy the token and paste it as your password when Git prompts you</li>
+        </ol>
+        <div class="callout tip"><div class="callout-icon">💡</div>
+          <div><strong>Recommended alternative:</strong> Use <strong>SSH keys</strong> to never type a password again. Follow: <code>ssh-keygen -t ed25519 -C "you@gwu.edu"</code> then add the public key to GitHub Settings → SSH Keys.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Everyday Remote Workflow</h3>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="c"># Before you start working — get latest changes from GitHub</span>
+git pull
+
+<span class="c"># Do your work, then:</span>
+git add .
+git commit <span class="num">-m</span> <span class="str">"Describe what you did"</span>
+git push</pre>
+  </div>
+
+  <h3>Cloning — Get Someone Else's Repo</h3>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="c"># Download a repo to your machine (one-time)</span>
+git clone https://github.com/USERNAME/REPO-NAME.git</pre>
+  </div>
+  <p>Cloning already sets up the remote automatically. You can immediately <code>git pull</code> and <code>git push</code>.</p>
+
+  <h3>Key Remote Commands</h3>
+  <table class="tbl">
+    <tr><th>Command</th><th>What it does</th></tr>
+    <tr><td>git remote -v</td><td>Show where "origin" points (the GitHub URL)</td></tr>
+    <tr><td>git push</td><td>Upload your local commits to GitHub</td></tr>
+    <tr><td>git pull</td><td>Download + merge GitHub changes into your local branch</td></tr>
+    <tr><td>git fetch</td><td>Download changes but don't merge yet (inspect first)</td></tr>
+    <tr><td>git clone &lt;url&gt;</td><td>Copy a repo from GitHub to your computer</td></tr>
+  </table>
+
+  <div class="collapse">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      ⚠️ Common Issues — Module 2<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <p><strong>"rejected: non-fast-forward"</strong> — GitHub has commits your local repo doesn't have. Run <code>git pull</code> first, then push again.</p>
+      <p><strong>"Authentication failed"</strong> — Your password won't work. Create a Personal Access Token (see Step 3 above) or set up SSH.</p>
+      <p><strong>"remote origin already exists"</strong> — Remove it and re-add: <code>git remote remove origin</code> then <code>git remote add origin &lt;url&gt;</code></p>
+      <p><strong>Wrong URL</strong> — Fix it: <code>git remote set-url origin https://github.com/YOU/REPO.git</code></p>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head">
+      <span class="task-tag">🎯 Project Task</span>
+      <span class="title">Module 2 — Push to GitHub</span>
+    </div>
+    <ul class="checklist" id="tasks-m2">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a new repo on GitHub called <code>my-tech-wiki</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run <code>git remote add origin</code> with your repo URL and push</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Refresh github.com — you should see your files live</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Edit <code>README.md</code> to add a link to <code>git-basics.md</code>, commit, and push</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 3 ════════ -->
+<section class="module" id="m3">
+  <div class="mod-head">
+    <div class="mod-icon">🌿</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 45 min</span></div>
+      <h2>Module 3 · Branching</h2>
+    </div>
+  </div>
+
+  <h3>Why branch?</h3>
+  <div class="concept">
+    <div class="ct">Analogy</div>
+    A branch is a <strong>parallel universe</strong> for your code. You can experiment, break things,
+    and build features in a branch without touching the stable <code>main</code> branch. When you're
+    happy with the result, you merge the universes back together.
+  </div>
+
+  <div class="graph-wrap">
+    <svg width="540" height="140" viewBox="0 0 540 140">
+      <defs>
+        <marker id="ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#58a6ff"/>
+        </marker>
+      </defs>
+      <!-- Main branch line -->
+      <line x1="40" y1="50" x2="500" y2="50" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,4"/>
+      <line x1="40" y1="50" x2="500" y2="50" stroke="#58a6ff" stroke-width="2" stroke-dasharray="none" x2="140"/>
+      <line x1="300" y1="50" x2="500" y2="50" stroke="#58a6ff" stroke-width="2"/>
+      <!-- Feature branch -->
+      <path d="M140,50 Q160,50 180,90" stroke="#3fb950" stroke-width="2" fill="none"/>
+      <line x1="180" y1="90" x2="280" y2="90" stroke="#3fb950" stroke-width="2"/>
+      <path d="M280,90 Q300,90 300,50" stroke="#3fb950" stroke-width="2" fill="none"/>
+      <!-- Commits on main -->
+      <circle cx="40" cy="50" r="14" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="40" y="54" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700">C1</text>
+      <circle cx="140" cy="50" r="14" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="140" y="54" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700">C2</text>
+      <circle cx="300" cy="50" r="14" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="300" y="54" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700">C5</text>
+      <circle cx="420" cy="50" r="14" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="420" y="54" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700">C6</text>
+      <!-- Commits on feature -->
+      <circle cx="180" cy="90" r="14" fill="#161b22" stroke="#3fb950" stroke-width="2"/>
+      <text x="180" y="94" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="700">C3</text>
+      <circle cx="260" cy="90" r="14" fill="#161b22" stroke="#3fb950" stroke-width="2"/>
+      <text x="260" y="94" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="700">C4</text>
+      <!-- Labels -->
+      <text x="40" y="24" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">main</text>
+      <text x="220" y="120" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="600">feature/add-page</text>
+      <text x="300" y="24" text-anchor="middle" fill="#8b949e" font-size="10">merge commit</text>
+    </svg>
+  </div>
+
+  <h3>Branch Commands</h3>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># See all branches (★ = where you are now)</span>
+git branch
+
+<span class="c"># Create a new branch AND switch to it</span>
+git switch <span class="num">-c</span> feature/add-github-page
+
+<span class="c"># Switch to an existing branch</span>
+git switch main
+
+<span class="c"># Delete a branch (after merging)</span>
+git branch <span class="num">-d</span> feature/add-github-page</pre>
+  </div>
+
+  <div class="callout info"><div class="callout-icon">ℹ️</div>
+    <div><strong>Naming convention:</strong> Use <code>feature/</code>, <code>fix/</code>, or <code>docs/</code> prefixes. Keep names short and hyphen-separated: <code>feature/login-page</code>, <code>fix/typo-readme</code>.</div>
+  </div>
+
+  <h3>Merging — Bringing It All Together</h3>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Step 1: Go to the branch you want to merge INTO</span>
+git switch main
+
+<span class="c"># Step 2: Merge the feature branch into main</span>
+git merge feature/add-github-page</pre>
+  </div>
+
+  <h3>Merge Conflicts — Don't Panic</h3>
+  <div class="concept">
+    <div class="ct">What is a merge conflict?</div>
+    Git can't automatically combine two edits to the <em>same lines</em> in the same file.
+    It pauses and asks you to decide what the final version should be.
+  </div>
+
+  <p>When a conflict happens, Git marks the file like this:</p>
+  <div class="conflict-block">
+    <div class="cb-yours">
+      <code style="color:#3fb950">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code><br>
+      ## Git is a version control system<br>
+      <code style="color:#3fb950">======= </code>
+    </div>
+    <div class="cb-sep">↑ YOUR version (current branch) &nbsp;&nbsp; ↓ THEIR version (incoming branch)</div>
+    <div class="cb-theirs">
+      <code style="color:#8b949e">=======</code><br>
+      ## Git tracks changes to your files<br>
+      <code style="color:#f85149">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/add-github-page</code>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Open the conflicted file in your editor</strong>
+        <p style="font-size:13px;color:var(--text-muted);">VS Code shows conflict markers with buttons: "Accept Current", "Accept Incoming", or "Accept Both".</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Edit the file to what you WANT it to say — delete all conflict markers</strong>
+        <div class="code-wrap">
+          <pre><span class="c"># The final version should look clean — no &lt;&lt;&lt;, ===, or &gt;&gt;&gt; lines</span>
+## Git tracks changes to your files over time</pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Mark the conflict as resolved and finish the merge</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git add README.md                    <span class="c"># mark resolved</span>
+git commit <span class="num">-m</span> <span class="str">"Merge feature branch, resolve conflict"</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout ok"><div class="callout-icon">✅</div>
+    <div>A merge conflict is not a failure — it's Git saying "I need a human to make a decision here." Stay calm, read the markers, and pick the right content.</div>
+  </div>
+
+  <div class="collapse">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      ⚠️ Common Issues — Module 3<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <p><strong>"Detached HEAD" state</strong> — This means you're on a specific commit, not a branch. Anything you commit here could be lost. Fix it:</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git switch main   <span class="c"># go back to a branch</span></pre></div>
+      <p><strong>"You have unmerged paths"</strong> — You started a merge but didn't finish resolving conflicts. Fix all files with conflict markers, then <code>git add</code> and <code>git commit</code>.</p>
+      <p><strong>I accidentally committed to main</strong> — Move the commit to a new branch:</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git switch <span class="num">-c</span> my-feature   <span class="c"># create branch with the commits</span>
+git switch main
+git reset <span class="num">--hard</span> HEAD~1     <span class="c"># remove the accidental commit from main</span></pre></div>
+      <div class="callout warn"><div class="callout-icon">⚠️</div><div>Only use <code>reset --hard</code> if you haven't pushed to GitHub yet.</div></div>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head">
+      <span class="task-tag">🎯 Project Task</span>
+      <span class="title">Module 3 — Branch &amp; Merge</span>
+    </div>
+    <ul class="checklist" id="tasks-m3">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a branch: <code>git switch -c feature/github-page</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create <code>github.md</code> with notes on GitHub (remotes, push, pull)</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Commit it on the feature branch</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Switch back to main: <code>git switch main</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Merge: <code>git merge feature/github-page</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Push main to GitHub</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 4 ════════ -->
+<section class="module" id="m4">
+  <div class="mod-head">
+    <div class="mod-icon">🤝</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 40 min</span></div>
+      <h2>Module 4 · Collaboration &amp; Pull Requests</h2>
+    </div>
+  </div>
+
+  <h3>Fork vs Clone</h3>
+  <table class="tbl">
+    <tr><th></th><th>Fork</th><th>Clone</th></tr>
+    <tr><td>What</td><td>Copy a repo to YOUR GitHub account</td><td>Download a repo to your computer</td></tr>
+    <tr><td>When</td><td>Contributing to someone else's public repo</td><td>Working on any repo you have access to</td></tr>
+    <tr><td>Where</td><td>On GitHub (github.com)</td><td>In your terminal</td></tr>
+    <tr><td>Result</td><td>A new repo owned by you on GitHub</td><td>A local folder with the full history</td></tr>
+  </table>
+
+  <div class="concept">
+    <div class="ct">Typical Open-Source Contribution Flow</div>
+    <strong>Fork</strong> the repo → <strong>clone</strong> your fork → create a <strong>branch</strong> → make changes → <strong>push</strong> → open a <strong>Pull Request</strong> → get reviewed → <strong>merged</strong>.
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">PR Lifecycle — the full collaboration loop</div>
+    <div class="diagram-inner">
+      <div class="pr-flow">
+        <div class="pr-step"><span class="ps-icon">🍴</span>Fork</div>
+        <span class="pr-connector">→</span>
+        <div class="pr-step"><span class="ps-icon">⬇️</span>Clone</div>
+        <span class="pr-connector">→</span>
+        <div class="pr-step"><span class="ps-icon">🌿</span>Branch</div>
+        <span class="pr-connector">→</span>
+        <div class="pr-step highlight"><span class="ps-icon">✏️</span>Commit</div>
+        <span class="pr-connector">→</span>
+        <div class="pr-step"><span class="ps-icon">📤</span>Push</div>
+        <span class="pr-connector">→</span>
+        <div class="pr-step highlight"><span class="ps-icon">🔀</span>Open PR</div>
+        <span class="pr-connector">→</span>
+        <div class="pr-step loop"><span class="ps-icon">👁️</span>Review</div>
+        <span class="pr-connector">→</span>
+        <div class="pr-step" style="background:rgba(63,185,80,.1);border-color:var(--green);color:var(--green)"><span class="ps-icon">✅</span>Merge</div>
+      </div>
+      <div class="pr-loop-note">⟳ If reviewer requests changes → go back to Commit, push again — the PR updates automatically</div>
+    </div>
+  </div>
+
+  <h3>Pull Requests (PRs)</h3>
+  <p>A Pull Request is a <strong>conversation</strong> about a proposed change. It lets teammates review your code before it's merged into main.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Push your feature branch to GitHub</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>git switch <span class="num">-c</span> feature/my-change
+<span class="c"># ... make changes, commit them ...</span>
+git push <span class="num">-u</span> origin feature/my-change</pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Open a Pull Request on GitHub</strong>
+        <p style="font-size:14px;color:var(--text-muted);">After pushing, GitHub shows a banner: <em>"Compare &amp; pull request"</em>. Click it.<br>
+        Fill in a clear <strong>title</strong> and <strong>description</strong> explaining what you changed and why.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Address review feedback</strong>
+        <p style="font-size:14px;color:var(--text-muted);">If a reviewer requests changes, just commit more to the same branch — the PR updates automatically.</p>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># You're still on the same branch, just keep working</span>
+git add .
+git commit <span class="num">-m</span> <span class="str">"Address review: fix typo, improve wording"</span>
+git push</pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <strong>After merge — clean up</strong>
+        <div class="code-wrap">
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git switch main
+git pull               <span class="c"># get the merged changes</span>
+git branch <span class="num">-d</span> feature/my-change   <span class="c"># delete local branch</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Issues — Track Work</h3>
+  <p>GitHub Issues are like a to-do list for your project. Great for bug reports, feature requests, and questions.</p>
+  <div class="callout tip"><div class="callout-icon">💡</div>
+    <div>Close an issue automatically from a commit or PR description: write <code>Fixes #42</code> or <code>Closes #42</code>. When the PR merges, issue #42 closes automatically.</div>
+  </div>
+
+  <h3>Code Review Tips</h3>
+  <ul>
+    <li>Review <strong>logic</strong>, not style (unless style is the point)</li>
+    <li>Ask questions instead of demanding changes: "What if we used X here?"</li>
+    <li>Always approve something you're happy merging. Block only real problems.</li>
+    <li>As the author, respond to every comment — even to say "done" or "disagree because..."</li>
+  </ul>
+
+  <div class="collapse">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      ⚠️ Common Issues — Module 4<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <p><strong>"This branch is X commits behind main"</strong> — Your fork is out of date. Update it:</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git remote add upstream https://github.com/ORIGINAL-OWNER/REPO.git
+git fetch upstream
+git merge upstream/main</pre></div>
+      <p><strong>PR has conflicts</strong> — Pull the target branch into your feature branch to resolve:</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git switch feature/my-change
+git merge main        <span class="c"># resolve any conflicts, commit</span>
+git push</pre></div>
+      <p><strong>I pushed to the wrong branch</strong> — Move the commit:</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git log --oneline     <span class="c"># find the commit hash</span>
+git switch correct-branch
+git cherry-pick &lt;commit-hash&gt;</pre></div>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head">
+      <span class="task-tag">🎯 Project Task</span>
+      <span class="title">Module 4 — Open a Pull Request</span>
+    </div>
+    <ul class="checklist" id="tasks-m4">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create branch <code>feature/branching-notes</code> and add <code>branching.md</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Push the branch to GitHub</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open a Pull Request on GitHub with a description</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Merge the PR on GitHub, then run <code>git pull</code> locally</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Fork a classmate's repo and open a PR with an improvement</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 5 ════════ -->
+<section class="module" id="m5">
+  <div class="mod-head">
+    <div class="mod-icon">🔧</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 40 min</span></div>
+      <h2>Module 5 · When Things Go Wrong</h2>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">Undo Decision Tree — pick the right command before you panic</div>
+    <div class="diagram-inner dtree-wrap">
+      <svg viewBox="0 0 620 280" width="620" height="280" style="max-width:100%">
+        <!-- Root -->
+        <rect x="210" y="10" width="200" height="36" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+        <text x="310" y="33" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">😱 Made a mistake?</text>
+        <!-- Root → Branch 1 line -->
+        <line x1="310" y1="46" x2="310" y2="72" stroke="#30363d" stroke-width="1.5"/>
+        <!-- Question 1 -->
+        <rect x="170" y="72" width="280" height="36" rx="6" fill="#21262d" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="310" y="95" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="600">Already pushed to GitHub?</text>
+        <!-- Yes path (left) -->
+        <line x1="200" y1="108" x2="120" y2="140" stroke="#f85149" stroke-width="1.5"/>
+        <text x="148" y="130" text-anchor="middle" fill="#f85149" font-size="10">YES</text>
+        <!-- No path (right) -->
+        <line x1="420" y1="108" x2="500" y2="140" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="472" y="130" text-anchor="middle" fill="#3fb950" font-size="10">NO</text>
+        <!-- YES leaf -->
+        <rect x="20" y="140" width="200" height="52" rx="6" fill="rgba(248,81,73,.1)" stroke="#f85149" stroke-width="1.5"/>
+        <text x="120" y="160" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="700">git revert HEAD</text>
+        <text x="120" y="176" text-anchor="middle" fill="#8b949e" font-size="10">Creates a NEW commit that</text>
+        <text x="120" y="188" text-anchor="middle" fill="#8b949e" font-size="10">undoes the last one. Safe ✅</text>
+        <!-- NO subtree -->
+        <rect x="400" y="140" width="210" height="36" rx="6" fill="#21262d" stroke="#d29922" stroke-width="1.5"/>
+        <text x="505" y="163" text-anchor="middle" fill="#d29922" font-size="12" font-weight="600">Keep the changes?</text>
+        <!-- Keep YES -->
+        <line x1="440" y1="176" x2="400" y2="208" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="413" y="198" text-anchor="middle" fill="#3fb950" font-size="10">YES</text>
+        <rect x="300" y="208" width="210" height="52" rx="6" fill="rgba(63,185,80,.1)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="405" y="228" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="700">git reset --soft HEAD~1</text>
+        <text x="405" y="244" text-anchor="middle" fill="#8b949e" font-size="10">Removes commit, keeps files</text>
+        <text x="405" y="256" text-anchor="middle" fill="#8b949e" font-size="10">staged and ready to re-commit</text>
+        <!-- Keep NO -->
+        <line x1="570" y1="176" x2="590" y2="208" stroke="#f85149" stroke-width="1.5"/>
+        <text x="591" y="198" text-anchor="middle" fill="#f85149" font-size="10">NO</text>
+        <rect x="520" y="208" width="96" height="52" rx="6" fill="rgba(248,81,73,.1)" stroke="#f85149" stroke-width="1.5"/>
+        <text x="568" y="228" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="700">git reset</text>
+        <text x="568" y="244" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="700">--hard HEAD~1</text>
+        <text x="568" y="262" text-anchor="middle" fill="#f85149" font-size="9">⚠ Deletes changes</text>
+        <!-- Not staged box -->
+        <rect x="20" y="208" width="200" height="52" rx="6" fill="rgba(88,166,255,.08)" stroke="#58a6ff" stroke-width="1.5"/>
+        <line x1="120" y1="192" x2="120" y2="208" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="120" y="228" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="700">Not staged yet?</text>
+        <text x="120" y="244" text-anchor="middle" fill="#58a6ff" font-size="10">git restore &lt;file&gt;</text>
+        <text x="120" y="257" text-anchor="middle" fill="#8b949e" font-size="9">discards unsaved edits</text>
+      </svg>
+    </div>
+  </div>
+
+  <h3>Undoing Changes — Choose the Right Tool</h3>
+  <table class="tbl">
+    <tr><th>Situation</th><th>Command</th><th>Safe to push?</th></tr>
+    <tr><td>Discard changes to a file (not staged)</td><td><code>git restore &lt;file&gt;</code></td><td>✅ yes</td></tr>
+    <tr><td>Unstage a file (keep changes)</td><td><code>git restore --staged &lt;file&gt;</code></td><td>✅ yes</td></tr>
+    <tr><td>Undo last commit (keep changes staged)</td><td><code>git reset --soft HEAD~1</code></td><td>⚠️ only if not pushed</td></tr>
+    <tr><td>Undo a commit with a new "reverse" commit</td><td><code>git revert HEAD</code></td><td>✅ yes, always safe</td></tr>
+    <tr><td>Completely erase last N commits</td><td><code>git reset --hard HEAD~N</code></td><td>🚫 never push after this</td></tr>
+  </table>
+
+  <div class="callout danger"><div class="callout-icon">🚫</div>
+    <div><strong>Never force-push to <code>main</code></strong> — it rewrites history and can permanently delete teammates' work. If you need to undo something that was already pushed, use <code>git revert</code>.</div>
+  </div>
+
+  <h3>The .gitignore File</h3>
+  <p>Tell Git to completely ignore certain files — secrets, build output, OS junk.</p>
+  <div class="code-wrap">
+    <div class="code-label">.gitignore</div>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Python</span>
+__pycache__/
+*.pyc
+.env
+venv/
+
+<span class="c"># Node.js</span>
+node_modules/
+dist/
+.env.local
+
+<span class="c"># macOS</span>
+.DS_Store
+
+<span class="c"># Editors</span>
+.vscode/
+.idea/</pre>
+  </div>
+
+  <div class="callout danger"><div class="callout-icon">🚫</div>
+    <div><strong>Never commit <code>.env</code> files</strong> — they contain API keys, database passwords, and secrets. If you accidentally did, the key is now public. Rotate the key immediately, then remove the file from history using <code>git filter-repo</code> or BFG Repo Cleaner.</div>
+  </div>
+
+  <h3>Fix Scenarios — Step by Step</h3>
+
+  <div class="collapse open">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      🔴 "Help! I committed a secret/password!"<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><div class="sb"><strong>Immediately rotate the secret</strong> — assume it's already been seen. Generate a new API key.</div></div>
+        <div class="step"><div class="sn">2</div><div class="sb">
+          <strong>Remove from history with git-filter-repo</strong>
+          <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">pip install git-filter-repo
+git filter-repo --path .env --invert-paths</pre></div>
+        </div></div>
+        <div class="step"><div class="sn">3</div><div class="sb"><strong>Add .env to .gitignore before anything else</strong></div></div>
+        <div class="step"><div class="sn">4</div><div class="sb"><strong>Force-push the cleaned history</strong> (coordinate with teammates first):<div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git push origin main --force</pre></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapse">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      🟡 "My push was rejected"<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <div class="terminal">
+        <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div></div>
+        <div class="t-body">
+          <div><span class="te">! [rejected] main -> main (non-fast-forward)</span></div>
+          <div class="to">error: failed to push some refs to 'github.com/...'</div>
+          <div class="to">hint: Updates were rejected because the tip of your current branch is behind</div>
+        </div>
+      </div>
+      <p><strong>Fix:</strong> Pull first, then push again.</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git pull <span class="num">--rebase</span>   <span class="c"># cleaner than a merge commit</span>
+git push</pre></div>
+    </div>
+  </div>
+
+  <div class="collapse">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      🟡 "I'm in detached HEAD state"<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <p>You checked out a specific commit instead of a branch. Any commits you make here will be orphaned.</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Option A: just go back to main (abandon any commits here)</span>
+git switch main
+
+<span class="c"># Option B: save your work on a new branch</span>
+git switch <span class="num">-c</span> my-saved-work</pre></div>
+    </div>
+  </div>
+
+  <div class="collapse">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      🟡 "I need to undo my last commit"<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <p><strong>Not pushed yet?</strong> Remove the commit but keep the changes staged:</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git reset <span class="num">--soft</span> HEAD~1</pre></div>
+      <p><strong>Already pushed?</strong> Use revert (creates a new commit that undoes the old one):</p>
+      <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git revert HEAD
+git push</pre></div>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head">
+      <span class="task-tag">🎯 Project Task</span>
+      <span class="title">Module 5 — Safety Net</span>
+    </div>
+    <ul class="checklist" id="tasks-m5">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a <code>.gitignore</code> file and add <code>.env</code>, <code>.DS_Store</code>, <code>__pycache__/</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Make a "bad" commit, then undo it with <code>git reset --soft HEAD~1</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Deliberately create a merge conflict, then resolve it correctly</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ GIT ER ROOM ════════ -->
+<section class="module" id="er">
+  <div class="mod-head">
+    <div class="mod-icon">🏥</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge" style="background:rgba(248,81,73,.12);color:var(--red);border:1px solid rgba(248,81,73,.3);">Emergency</span><span class="badge t">All Levels</span></div>
+      <h2>Git Emergency Room</h2>
+    </div>
+  </div>
+
+  <div class="er-room-header">
+    <div class="er-icon">🚑</div>
+    <div>
+      <h3>Walk-in for code emergencies. No appointment needed.</h3>
+      <p>These 7 disasters happen to <em>everyone</em> — including senior engineers. Knowing how to fix them is what separates a beginner from a pro. Click any case to see the full treatment.</p>
+    </div>
+  </div>
+
+  <div class="er-cases">
+
+    <div class="er-case" id="erc1">
+      <div class="er-case-head" onclick="toggleER(this)">
+        <span class="er-case-num">#001</span>
+        <span class="er-case-name">🔑 "The Leaked Secret" — committed .env to GitHub</span>
+        <span class="severity crit">🔴 Critical</span>
+        <span class="er-arr">▶</span>
+      </div>
+      <div class="er-case-body">
+        <div class="er-row"><span class="er-row-label">Symptom</span><span>You pushed code to GitHub and realized your <code>.env</code> file — containing an API key or database password — is now visible to the world.</span></div>
+        <div class="er-row"><span class="er-row-label">Why</span><span>No <code>.gitignore</code> was set up. Git tracked everything including secrets.</span></div>
+        <div class="er-row"><span class="er-row-label">Fix</span>
+          <div>
+            <div class="callout danger" style="margin-bottom:8px;"><div class="callout-icon">🚨</div><div><strong>Step 1 first, not last:</strong> Rotate the secret immediately. Generate a new API key/password right now — assume the old one is already compromised.</div></div>
+            <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="c"># Remove the file from all Git history</span>
+pip install git-filter-repo
+git filter-repo --path .env --invert-paths --force
+<span class="c"># Then force-push the cleaned history</span>
+git push origin main --force</pre></div>
+          </div>
+        </div>
+        <div class="er-row"><span class="er-row-label">Prevent</span><span>Create <code>.gitignore</code> as your <strong>very first file</strong> in every project. Add <code>.env</code>, <code>*.key</code>, <code>config/secrets.*</code> before your first commit.</span></div>
+      </div>
+    </div>
+
+    <div class="er-case" id="erc2">
+      <div class="er-case-head" onclick="toggleER(this)">
+        <span class="er-case-num">#002</span>
+        <span class="er-case-name">💣 "The Nuclear Strike" — force-pushed to main</span>
+        <span class="severity crit">🔴 Critical</span>
+        <span class="er-arr">▶</span>
+      </div>
+      <div class="er-case-body">
+        <div class="er-row"><span class="er-row-label">Symptom</span><span>You ran <code>git push --force</code> on <code>main</code>. Teammates' commits are gone from the remote. Slack is on fire.</span></div>
+        <div class="er-row"><span class="er-row-label">Why</span><span>Force-push overwrites the remote branch with your local version, erasing any commits that weren't in your local history.</span></div>
+        <div class="er-row"><span class="er-row-label">Fix</span>
+          <div>
+            <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Each teammate can recover their commits with reflog</span>
+git reflog                        <span class="c"># find the lost commit hash</span>
+git cherry-pick &lt;lost-hash&gt;       <span class="c"># replay the lost commit</span>
+<span class="c"># Or the teammate restores their work:</span>
+git push origin main --force      <span class="c"># now they push the recovered history</span></pre></div>
+          </div>
+        </div>
+        <div class="er-row"><span class="er-row-label">Prevent</span><span>Enable <strong>branch protection rules</strong> on GitHub: Settings → Branches → Add rule → check "Require pull request reviews" and "Block force pushes". Force-push only to your personal feature branches, never to main.</span></div>
+      </div>
+    </div>
+
+    <div class="er-case" id="erc3">
+      <div class="er-case-head" onclick="toggleER(this)">
+        <span class="er-case-num">#003</span>
+        <span class="er-case-name">👻 "The Detached Ghost" — detached HEAD state</span>
+        <span class="severity mod">🟡 Moderate</span>
+        <span class="er-arr">▶</span>
+      </div>
+      <div class="er-case-body">
+        <div class="er-row"><span class="er-row-label">Symptom</span><span><code>You are in 'detached HEAD' state.</code> You make some commits and then switch branches — and your commits vanish.</span></div>
+        <div class="er-row"><span class="er-row-label">Why</span><span>HEAD normally points to a branch. In detached HEAD, it points directly to a commit. Any new commits aren't on a branch, so they're invisible to <code>git log</code> and eventually garbage-collected.</span></div>
+        <div class="er-row"><span class="er-row-label">Fix</span>
+          <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Option A: save your work — create a branch RIGHT NOW</span>
+git switch -c rescue-branch   <span class="c"># your commits are now safe</span>
+
+<span class="c"># Option B: abandon the detached state (lose any commits there)</span>
+git switch main</pre></div>
+        </div>
+        <div class="er-row"><span class="er-row-label">Prevent</span><span>Always <code>git switch &lt;branch-name&gt;</code> to move between branches. Only do <code>git checkout &lt;commit-hash&gt;</code> intentionally for read-only exploration.</span></div>
+      </div>
+    </div>
+
+    <div class="er-case" id="erc4">
+      <div class="er-case-head" onclick="toggleER(this)">
+        <span class="er-case-num">#004</span>
+        <span class="er-case-name">🌊 "The Conflict Storm" — merge conflicts in 8 files</span>
+        <span class="severity mod">🟡 Moderate</span>
+        <span class="er-arr">▶</span>
+      </div>
+      <div class="er-case-body">
+        <div class="er-row"><span class="er-row-label">Symptom</span><span><code>CONFLICT (content): Merge conflict in README.md</code> × 8 files. You panic and close VS Code.</span></div>
+        <div class="er-row"><span class="er-row-label">Why</span><span>Two branches edited the same lines. This is not an error — it's Git correctly saying "I can't decide which version wins, human please choose."</span></div>
+        <div class="er-row"><span class="er-row-label">Fix</span>
+          <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git status                    <span class="c"># shows every conflicted file</span>
+<span class="c"># Open each file — find and resolve the <<<<<<< markers</span>
+<span class="c"># Then mark each file as resolved:</span>
+git add README.md
+git add other-file.md
+git commit                    <span class="c"># finishes the merge</span></pre></div>
+          <div class="callout tip"><div class="callout-icon">💡</div><div>VS Code shows "Accept Current Change / Accept Incoming / Accept Both Changes" buttons right above each conflict. Use them instead of editing markers by hand.</div></div>
+        </div>
+        <div class="er-row"><span class="er-row-label">Prevent</span><span>Sync with main frequently (<code>git merge main</code> or <code>git pull</code> daily). Small focused branches mean small conflicts. The longer you wait, the worse it gets.</span></div>
+      </div>
+    </div>
+
+    <div class="er-case" id="erc5">
+      <div class="er-case-head" onclick="toggleER(this)">
+        <span class="er-case-num">#005</span>
+        <span class="er-case-name">🦕 "The Ancient Branch" — 47 commits behind main</span>
+        <span class="severity min">🟢 Minor</span>
+        <span class="er-arr">▶</span>
+      </div>
+      <div class="er-case-body">
+        <div class="er-row"><span class="er-row-label">Symptom</span><span>GitHub says "This branch is 47 commits behind main." Your PR has 23 conflicts before you've even started.</span></div>
+        <div class="er-row"><span class="er-row-label">Why</span><span>You created a branch and worked on it for weeks without pulling updates from main. Now it's ancient history.</span></div>
+        <div class="er-row"><span class="er-row-label">Fix</span>
+          <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git switch your-branch
+git fetch origin
+git merge origin/main    <span class="c"># resolve any conflicts, then commit</span>
+git push</pre></div>
+          <p style="font-size:13px;color:var(--text-muted);margin-top:6px;">Or for a cleaner history: replace <code>git merge origin/main</code> with <code>git rebase origin/main</code>.</p>
+        </div>
+        <div class="er-row"><span class="er-row-label">Prevent</span><span>Make it a habit: every morning, <code>git pull</code> on main, then <code>git merge main</code> into your branch. Five seconds of habit saves hours of conflict resolution.</span></div>
+      </div>
+    </div>
+
+    <div class="er-case" id="erc6">
+      <div class="er-case-head" onclick="toggleER(this)">
+        <span class="er-case-num">#006</span>
+        <span class="er-case-name">📦 "node_modules in the Sky" — giant accidental commit</span>
+        <span class="severity mod">🟡 Moderate</span>
+        <span class="er-arr">▶</span>
+      </div>
+      <div class="er-case-body">
+        <div class="er-row"><span class="er-row-label">Symptom</span><span><code>git push</code> takes 8 minutes. GitHub shows your repo is 400MB. Your node_modules (or <code>__pycache__</code>, <code>.venv</code>, build output) was committed.</span></div>
+        <div class="er-row"><span class="er-row-label">Why</span><span>No <code>.gitignore</code>, so <code>git add .</code> swept up everything including dependency folders.</span></div>
+        <div class="er-row"><span class="er-row-label">Fix</span>
+          <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Stop tracking the folder WITHOUT deleting it locally</span>
+git rm -r --cached node_modules/
+echo "node_modules/" &gt;&gt; .gitignore
+git add .gitignore
+git commit -m "Remove node_modules, add gitignore"
+git push</pre></div>
+        </div>
+        <div class="er-row"><span class="er-row-label">Prevent</span><span>The very first commit in every project should be a <code>.gitignore</code>. GitHub provides templates: when creating a repo, select a .gitignore template for your language.</span></div>
+      </div>
+    </div>
+
+    <div class="er-case" id="erc7">
+      <div class="er-case-head" onclick="toggleER(this)">
+        <span class="er-case-num">#007</span>
+        <span class="er-case-name">✏️ "The Typo Commit" — embarrassing commit message</span>
+        <span class="severity min">🟢 Minor</span>
+        <span class="er-arr">▶</span>
+      </div>
+      <div class="er-case-body">
+        <div class="er-row"><span class="er-row-label">Symptom</span><span><code>git log</code> shows: <code>"Inital comit"</code> or <code>"asdfgh"</code> or <code>"fix stuff maybe idk"</code>. Now it's in your public GitHub history.</span></div>
+        <div class="er-row"><span class="er-row-label">Fix</span>
+          <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># If NOT pushed yet — rewrite the last commit message</span>
+git commit --amend -m "Initial commit: add README and project structure"
+
+<span class="c"># If already pushed — honestly, just move on.</span>
+<span class="c"># The commit exists. Future commits will be better.</span>
+<span class="c"># Nobody has ever been fired for "inital comit".</span></pre></div>
+        </div>
+        <div class="er-row"><span class="er-row-label">Prevent</span><span>Use the convention: <code>&lt;verb&gt; &lt;what&gt;</code> — "Add login page", "Fix null pointer in auth", "Remove unused imports". One sentence, present tense, no period.</span></div>
+      </div>
+    </div>
+
+  </div><!-- end er-cases -->
+</section>
+
+
+<!-- ════════ MODULE 6 ════════ -->
+<section class="module" id="m6">
+  <div class="mod-head">
+    <div class="mod-icon">⚡</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 45 min</span></div>
+      <h2>Module 6 · GitHub Actions</h2>
+    </div>
+  </div>
+
+  <h3>What is CI/CD?</h3>
+  <div class="concept">
+    <div class="ct">Concept</div>
+    <strong>CI</strong> (Continuous Integration) = automatically run tests every time code is pushed.<br>
+    <strong>CD</strong> (Continuous Deployment) = automatically deploy to production when tests pass.<br><br>
+    GitHub Actions lets you automate these workflows directly in your repo using YAML files.
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">CI/CD Pipeline — what happens after every git push</div>
+    <div class="diagram-inner">
+      <div class="pipeline-wrap" id="ciPipeline">
+        <div class="pl-stage" data-idx="0"><span class="pls-icon">💻</span><span class="pls-label">git push</span></div>
+        <span class="pl-connector">→</span>
+        <div class="pl-stage" data-idx="1"><span class="pls-icon">⚡</span><span class="pls-label">Trigger</span></div>
+        <span class="pl-connector">→</span>
+        <div class="pl-stage" data-idx="2"><span class="pls-icon">📦</span><span class="pls-label">Install deps</span></div>
+        <span class="pl-connector">→</span>
+        <div class="pl-stage" data-idx="3"><span class="pls-icon">🧪</span><span class="pls-label">Run tests</span></div>
+        <span class="pl-connector">→</span>
+        <div class="pl-branch">
+          <div class="pl-stage" data-idx="4" style="margin-bottom:6px"><span class="pls-icon">✅</span><span class="pls-label">Pass → Deploy</span></div>
+          <div class="pl-stage fail"><span class="pls-icon">❌</span><span class="pls-label">Fail → Notify</span></div>
+        </div>
+      </div>
+      <button class="pl-run-btn" onclick="runPipeline()">▶ Simulate a Pipeline Run</button>
+    </div>
+  </div>
+
+  <h3>Anatomy of a Workflow File</h3>
+  <div class="code-wrap">
+    <div class="code-label">.github/workflows/ci.yml</div>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="kw">name</span>: <span class="str">CI</span>                        <span class="c"># Name shown in GitHub UI</span>
+
+<span class="kw">on</span>:                              <span class="c"># WHEN to run this workflow</span>
+  <span class="kw">push</span>:
+    <span class="kw">branches</span>: [main]
+  <span class="kw">pull_request</span>:
+    <span class="kw">branches</span>: [main]
+
+<span class="kw">jobs</span>:
+  <span class="kw">test</span>:                          <span class="c"># Job name (can be anything)</span>
+    <span class="kw">runs-on</span>: ubuntu-latest      <span class="c"># Which OS to run on</span>
+
+    <span class="kw">steps</span>:
+      - <span class="kw">name</span>: <span class="str">Checkout code</span>
+        <span class="kw">uses</span>: actions/checkout@v4   <span class="c"># Download your repo</span>
+
+      - <span class="kw">name</span>: <span class="str">Set up Python</span>
+        <span class="kw">uses</span>: actions/setup-python@v5
+        <span class="kw">with</span>:
+          <span class="kw">python-version</span>: <span class="str">"3.12"</span>
+
+      - <span class="kw">name</span>: <span class="str">Install dependencies</span>
+        <span class="kw">run</span>: pip install -r requirements.txt
+
+      - <span class="kw">name</span>: <span class="str">Run tests</span>
+        <span class="kw">run</span>: pytest</pre>
+  </div>
+
+  <h3>A Workflow for My Tech Wiki — Markdown Linter</h3>
+  <div class="code-wrap">
+    <div class="code-label">.github/workflows/lint.yml</div>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="kw">name</span>: <span class="str">Lint Markdown</span>
+
+<span class="kw">on</span>: [push, pull_request]
+
+<span class="kw">jobs</span>:
+  <span class="kw">markdownlint</span>:
+    <span class="kw">runs-on</span>: ubuntu-latest
+    <span class="kw">steps</span>:
+      - <span class="kw">uses</span>: actions/checkout@v4
+      - <span class="kw">name</span>: <span class="str">Lint .md files</span>
+        <span class="kw">uses</span>: DavidAnson/markdownlint-cli2-action@v17
+        <span class="kw">with</span>:
+          <span class="kw">globs</span>: <span class="str">"**/*.md"</span></pre>
+  </div>
+
+  <h3>Using Secrets — Don't Hardcode API Keys</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Add a secret on GitHub</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Repository → Settings → Secrets and variables → Actions → New repository secret</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Use the secret in your workflow</strong>
+        <div class="code-wrap"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">      - <span class="kw">name</span>: <span class="str">Deploy</span>
+        <span class="kw">env</span>:
+          <span class="kw">API_KEY</span>: <span class="str">${{ secrets.MY_API_KEY }}</span>   <span class="c"># never visible in logs</span>
+        <span class="kw">run</span>: ./deploy.sh</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Workflow Triggers Reference</h3>
+  <table class="tbl">
+    <tr><th>Trigger</th><th>When it runs</th></tr>
+    <tr><td>push</td><td>Every commit pushed to any matching branch</td></tr>
+    <tr><td>pull_request</td><td>When a PR is opened, updated, or merged</td></tr>
+    <tr><td>schedule</td><td>On a cron schedule (e.g., every day at 9am)</td></tr>
+    <tr><td>workflow_dispatch</td><td>Manually via the GitHub UI</td></tr>
+    <tr><td>release</td><td>When you publish a GitHub Release</td></tr>
+  </table>
+
+  <div class="collapse">
+    <div class="collapse-head" onclick="toggleCollapse(this)">
+      ⚠️ Common Issues — Module 6<span class="arr">▶</span>
+    </div>
+    <div class="collapse-body">
+      <p><strong>YAML indentation errors</strong> — YAML is <em>very</em> sensitive to spaces (not tabs). Use a YAML linter: paste into <a href="https://www.yamllint.com" target="_blank">yamllint.com</a> before committing.</p>
+      <p><strong>"Workflow not triggering"</strong> — Check that the file is at exactly <code>.github/workflows/filename.yml</code> (plural "workflows").</p>
+      <p><strong>Workflow passes locally but fails in CI</strong> — The CI environment is fresh every time. Make sure you install all dependencies in a <code>run</code> step; don't assume anything is pre-installed.</p>
+      <p><strong>Secrets show as "***" in logs</strong> — That's correct behavior. If you're not seeing them at all, make sure the secret name in the YAML matches exactly (case-sensitive).</p>
+    </div>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head">
+      <span class="task-tag">🎯 Project Task</span>
+      <span class="title">Module 6 — Add GitHub Actions</span>
+    </div>
+    <ul class="checklist" id="tasks-m6">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create <code>.github/workflows/lint.yml</code> with the Markdown linter above</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Commit and push — watch the Action run on GitHub → Actions tab</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Introduce a markdown error, push, watch the Action fail</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Fix the error, push again, see the Action turn green ✅</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ MODULE 7 ════════ -->
+<section class="module" id="m7">
+  <div class="mod-head">
+    <div class="mod-icon">🚀</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40 min</span></div>
+      <h2>Module 7 · Advanced Git</h2>
+    </div>
+  </div>
+
+  <h3>git stash — Save Work Without Committing</h3>
+  <p>Stash is like a temporary drawer. Useful when you need to switch branches but aren't ready to commit.</p>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git stash                      <span class="c"># save current changes away</span>
+git switch other-branch        <span class="c"># do your other work</span>
+git switch back-to-my-branch
+git stash pop                  <span class="c"># restore saved changes</span>
+
+git stash list                 <span class="c"># see all stashes</span>
+git stash drop                 <span class="c"># delete the stash without restoring</span></pre>
+  </div>
+
+  <h3>git rebase — Cleaner History</h3>
+  <div class="concept">
+    <div class="ct">Merge vs Rebase</div>
+    <strong>Merge</strong> creates a merge commit that joins two histories — good for shared branches.<br>
+    <strong>Rebase</strong> replays your commits on top of another branch — creates a clean linear history. Better for personal feature branches before a PR.
+  </div>
+
+  <div class="graph-wrap">
+    <svg width="520" height="160" viewBox="0 0 520 160">
+      <!-- MERGE side -->
+      <text x="120" y="18" text-anchor="middle" fill="#8b949e" font-size="11">git merge</text>
+      <line x1="20" y1="50" x2="200" y2="50" stroke="#58a6ff" stroke-width="1.5"/>
+      <path d="M80,50 C90,50 90,90 100,90" stroke="#3fb950" stroke-width="1.5" fill="none"/>
+      <line x1="100" y1="90" x2="160" y2="90" stroke="#3fb950" stroke-width="1.5"/>
+      <path d="M160,90 C170,90 170,50 200,50" stroke="#3fb950" stroke-width="1.5" fill="none"/>
+      <circle cx="20" cy="50" r="10" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="20" y="54" text-anchor="middle" fill="#58a6ff" font-size="8">A</text>
+      <circle cx="80" cy="50" r="10" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="80" y="54" text-anchor="middle" fill="#58a6ff" font-size="8">B</text>
+      <circle cx="100" cy="90" r="10" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="100" y="94" text-anchor="middle" fill="#3fb950" font-size="8">C</text>
+      <circle cx="160" cy="90" r="10" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="160" y="94" text-anchor="middle" fill="#3fb950" font-size="8">D</text>
+      <circle cx="200" cy="50" r="10" fill="#161b22" stroke="#ffd700" stroke-width="2"/>
+      <text x="200" y="54" text-anchor="middle" fill="#ffd700" font-size="8">M</text>
+      <text x="200" y="36" text-anchor="middle" fill="#ffd700" font-size="9">merge commit</text>
+
+      <!-- REBASE side -->
+      <text x="390" y="18" text-anchor="middle" fill="#8b949e" font-size="11">git rebase</text>
+      <line x1="290" y1="50" x2="510" y2="50" stroke="#58a6ff" stroke-width="1.5"/>
+      <circle cx="290" cy="50" r="10" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="290" y="54" text-anchor="middle" fill="#58a6ff" font-size="8">A</text>
+      <circle cx="350" cy="50" r="10" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="350" y="54" text-anchor="middle" fill="#58a6ff" font-size="8">B</text>
+      <circle cx="420" cy="50" r="10" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="420" y="54" text-anchor="middle" fill="#3fb950" font-size="8">C'</text>
+      <circle cx="490" cy="50" r="10" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="490" y="54" text-anchor="middle" fill="#3fb950" font-size="8">D'</text>
+      <text x="455" y="78" text-anchor="middle" fill="#8b949e" font-size="9">linear — no merge commit</text>
+    </svg>
+  </div>
+
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Rebase your feature branch on top of latest main</span>
+git switch feature/my-feature
+git rebase main
+
+<span class="c"># Interactive rebase — squash, reorder, rename commits</span>
+git rebase <span class="num">-i</span> HEAD~3   <span class="c"># edit last 3 commits</span></pre>
+  </div>
+  <div class="callout warn"><div class="callout-icon">⚠️</div>
+    <div><strong>Never rebase a branch other people are using.</strong> Rebase rewrites commit hashes, which breaks everyone else's copy.</div>
+  </div>
+
+  <h3>Powerful git log</h3>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git log <span class="num">--oneline --graph --all</span>     <span class="c"># visual ASCII branch graph</span>
+git log <span class="num">--author=</span><span class="str">"Your Name"</span>          <span class="c"># filter by author</span>
+git log <span class="num">--since=</span><span class="str">"2 weeks ago"</span>         <span class="c"># filter by date</span>
+git log <span class="num">--grep=</span><span class="str">"fix"</span>                   <span class="c"># search commit messages</span>
+git log <span class="num">-p</span> -- README.md               <span class="c"># history of one file</span></pre>
+  </div>
+
+  <h3>Tags &amp; Releases</h3>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Tag a specific commit (e.g., version 1.0)</span>
+git tag <span class="num">-a</span> v1.0 <span class="num">-m</span> <span class="str">"First stable release"</span>
+git push origin v1.0
+
+<span class="c"># List all tags</span>
+git tag</pre>
+  </div>
+  <p>On GitHub, go to <strong>Releases → Create a new release</strong> and pick a tag to publish an official release with notes and downloadable assets.</p>
+
+  <h3>Git Aliases — Type Less</h3>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># Set these once, use them forever</span>
+git config <span class="num">--global</span> alias.st  <span class="str">"status"</span>
+git config <span class="num">--global</span> alias.co  <span class="str">"switch"</span>
+git config <span class="num">--global</span> alias.lg  <span class="str">"log --oneline --graph --all"</span>
+
+<span class="c"># Now you can type:</span>
+git st     <span class="c"># instead of git status</span>
+git lg     <span class="c"># instead of git log --oneline --graph --all</span></pre>
+  </div>
+
+  <h3>git bisect — Find Which Commit Broke Something</h3>
+  <div class="code-wrap">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">git bisect start
+git bisect bad              <span class="c"># current commit is broken</span>
+git bisect good v1.0        <span class="c"># v1.0 was working</span>
+<span class="c"># Git checks out a middle commit — test it, then:</span>
+git bisect good             <span class="c"># or: git bisect bad</span>
+<span class="c"># Repeat until Git finds the exact breaking commit</span>
+git bisect reset            <span class="c"># go back to HEAD when done</span></pre>
+  </div>
+
+  <div class="task-box">
+    <div class="task-box-head">
+      <span class="task-tag">🎯 Project Task</span>
+      <span class="title">Module 7 — Polish &amp; Release</span>
+    </div>
+    <ul class="checklist" id="tasks-m7">
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run <code>git log --oneline --graph --all</code> to see your full project history</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add 3 git aliases to your config</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a tag: <code>git tag -a v1.0 -m "Initial wiki complete"</code> and push it</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Publish a GitHub Release from the tag with release notes</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════ CHEAT SHEET ════════ -->
+<section class="module" id="cs">
+  <div class="mod-head">
+    <div class="mod-icon">📋</div>
+    <div class="mod-meta">
+      <div class="badges"><span class="badge" style="background:rgba(188,140,255,.12);color:var(--purple);border-color:rgba(188,140,255,.3);">Reference</span></div>
+      <h2>Cheat Sheet</h2>
+    </div>
+  </div>
+
+  <div class="cs-grid">
+    <div class="cs-card">
+      <div class="cs-head">Setup</div>
+      <table>
+        <tr><td>git config --global user.name "X"</td><td>Set your name</td></tr>
+        <tr><td>git config --global user.email "X"</td><td>Set your email</td></tr>
+        <tr><td>git config --list</td><td>Show all config</td></tr>
+      </table>
+    </div>
+    <div class="cs-card">
+      <div class="cs-head">Create &amp; Initialize</div>
+      <table>
+        <tr><td>git init</td><td>Create a new repo</td></tr>
+        <tr><td>git clone &lt;url&gt;</td><td>Clone from GitHub</td></tr>
+      </table>
+    </div>
+    <div class="cs-card">
+      <div class="cs-head">Staging &amp; Committing</div>
+      <table>
+        <tr><td>git status</td><td>What's changed?</td></tr>
+        <tr><td>git add &lt;file&gt;</td><td>Stage a file</td></tr>
+        <tr><td>git add .</td><td>Stage everything</td></tr>
+        <tr><td>git commit -m "msg"</td><td>Save a snapshot</td></tr>
+        <tr><td>git commit --amend</td><td>Fix last commit</td></tr>
+      </table>
+    </div>
+    <div class="cs-card">
+      <div class="cs-head">Branches</div>
+      <table>
+        <tr><td>git branch</td><td>List branches</td></tr>
+        <tr><td>git switch -c &lt;name&gt;</td><td>Create &amp; switch</td></tr>
+        <tr><td>git switch &lt;name&gt;</td><td>Switch branch</td></tr>
+        <tr><td>git merge &lt;branch&gt;</td><td>Merge into current</td></tr>
+        <tr><td>git branch -d &lt;name&gt;</td><td>Delete branch</td></tr>
+      </table>
+    </div>
+    <div class="cs-card">
+      <div class="cs-head">Remote</div>
+      <table>
+        <tr><td>git remote -v</td><td>Show remotes</td></tr>
+        <tr><td>git remote add origin &lt;url&gt;</td><td>Add remote</td></tr>
+        <tr><td>git push -u origin main</td><td>First push</td></tr>
+        <tr><td>git push</td><td>Push changes</td></tr>
+        <tr><td>git pull</td><td>Pull changes</td></tr>
+        <tr><td>git fetch</td><td>Download (no merge)</td></tr>
+      </table>
+    </div>
+    <div class="cs-card">
+      <div class="cs-head">Undoing</div>
+      <table>
+        <tr><td>git restore &lt;file&gt;</td><td>Discard changes</td></tr>
+        <tr><td>git restore --staged &lt;file&gt;</td><td>Unstage</td></tr>
+        <tr><td>git reset --soft HEAD~1</td><td>Undo commit, keep files</td></tr>
+        <tr><td>git revert HEAD</td><td>Safe undo (new commit)</td></tr>
+      </table>
+    </div>
+    <div class="cs-card">
+      <div class="cs-head">Inspecting</div>
+      <table>
+        <tr><td>git log --oneline</td><td>Compact history</td></tr>
+        <tr><td>git log --graph --all</td><td>Visual branch graph</td></tr>
+        <tr><td>git diff</td><td>Unstaged changes</td></tr>
+        <tr><td>git diff --staged</td><td>Staged changes</td></tr>
+        <tr><td>git show &lt;hash&gt;</td><td>Show a commit</td></tr>
+        <tr><td>git blame &lt;file&gt;</td><td>Who changed each line</td></tr>
+      </table>
+    </div>
+    <div class="cs-card">
+      <div class="cs-head">Advanced</div>
+      <table>
+        <tr><td>git stash</td><td>Stash dirty work</td></tr>
+        <tr><td>git stash pop</td><td>Restore stash</td></tr>
+        <tr><td>git rebase &lt;branch&gt;</td><td>Rebase onto branch</td></tr>
+        <tr><td>git cherry-pick &lt;hash&gt;</td><td>Apply one commit</td></tr>
+        <tr><td>git tag -a v1.0</td><td>Create annotated tag</td></tr>
+        <tr><td>git bisect start</td><td>Binary search for bug</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════ COMPLETION ════════ -->
+<div class="finish" id="finish" style="display:none;">
+  <div class="trophy">🏆</div>
+  <h2 style="font-size:26px;font-weight:800;margin-bottom:10px;">You finished the guide!</h2>
+  <p style="color:var(--text-muted);max-width:400px;margin:0 auto 20px;">
+    You now know everything from creating a first commit to automated CI/CD pipelines.
+    Your <code>my-tech-wiki</code> repository is proof of that.
+  </p>
+  <p style="font-size:14px;color:var(--text-muted);">
+    Share your repo link with your professor: <strong>github.com/YOUR-USERNAME/my-tech-wiki</strong>
+  </p>
+</div>
+
+</main>
+
+<script>
+// ── SCROLL HELPER ──
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (window.innerWidth <= 800) document.getElementById('sidebar').classList.remove('open');
+}
+
+// ── HERO CANVAS ──
+function initHeroCanvas() {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const branches = [
+    { y: 0.25, color: '#3fb950', commits: [0.08, 0.22, 0.38, 0.55, 0.72, 0.88] },
+    { y: 0.50, color: '#58a6ff', commits: [0.05, 0.18, 0.32, 0.48, 0.65, 0.80, 0.95] },
+    { y: 0.75, color: '#f0883e', commits: [0.12, 0.28, 0.45, 0.62, 0.78] },
+  ];
+  const merges = [{ from: 0, to: 1, atX: 0.38 }, { from: 2, to: 1, atX: 0.62 }];
+  let offset = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    ctx.globalAlpha = isDark ? 0.2 : 0.12;
+    branches.forEach(b => {
+      const y = canvas.height * b.y;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+      ctx.strokeStyle = b.color; ctx.lineWidth = 1.5; ctx.stroke();
+      b.commits.forEach(cx => {
+        const x = ((cx + offset) % 1.05) * canvas.width;
+        ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = isDark ? '#0d1117' : '#ffffff'; ctx.fill();
+        ctx.strokeStyle = b.color; ctx.lineWidth = 1.5; ctx.stroke();
+      });
+    });
+    merges.forEach(m => {
+      const x = ((m.atX + offset) % 1.05) * canvas.width;
+      const y1 = canvas.height * branches[m.from].y;
+      const y2 = canvas.height * branches[m.to].y;
+      ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2);
+      ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+    offset = (offset + 0.0003) % 1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── PIPELINE SIMULATION ──
+function runPipeline() {
+  const stages = document.querySelectorAll('#ciPipeline .pl-stage[data-idx]');
+  stages.forEach(s => { s.classList.remove('active'); });
+  let i = 0;
+  function next() {
+    if (i >= stages.length) return;
+    stages[i].classList.add('active');
+    i++;
+    setTimeout(next, 600);
+  }
+  next();
+}
+
+// ── ER ROOM TOGGLE ──
+function toggleER(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ── THEME ──
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = isDark ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+}
+
+// ── COPY BUTTONS ──
+function copyCode(btn) {
+  const pre = btn.closest('pre') || btn.parentElement.querySelector('pre');
+  const text = pre ? pre.innerText.replace(/^Copy\n?/, '').trim() : '';
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── COLLAPSIBLE ──
+function toggleCollapse(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ── TASK CHECKLIST ──
+function toggleTask(li) {
+  li.classList.toggle('done');
+  if (li.classList.contains('done')) li.querySelector('.cb').textContent = '✓';
+  else li.querySelector('.cb').textContent = '';
+  saveProgress();
+  updateProgress();
+}
+
+// ── PROGRESS ──
+const MODULES = ['m0','m1','m2','m3','m4','m5','m6','m7'];
+function getModuleDone(id) {
+  const ul = document.getElementById('tasks-' + id);
+  if (!ul) return false;
+  const items = ul.querySelectorAll('li');
+  const done = ul.querySelectorAll('li.done');
+  return items.length > 0 && done.length === items.length;
+}
+
+function updateProgress() {
+  let count = 0;
+  MODULES.forEach(id => {
+    const isDone = getModuleDone(id);
+    const navItem = document.querySelector(`[data-target="${id}"]`);
+    if (isDone) { count++; if (navItem) navItem.classList.add('done'); }
+    else { if (navItem) navItem.classList.remove('done'); }
+  });
+  const pct = Math.round((count / MODULES.length) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${count} of ${MODULES.length} modules complete`;
+  document.getElementById('finish').style.display = count === MODULES.length ? 'block' : 'none';
+}
+
+// ── PERSIST ──
+function saveProgress() {
+  const state = {};
+  document.querySelectorAll('.checklist').forEach(ul => {
+    const id = ul.id;
+    state[id] = [];
+    ul.querySelectorAll('li').forEach((li, i) => {
+      if (li.classList.contains('done')) state[id].push(i);
+    });
+  });
+  localStorage.setItem('gwu-git-progress', JSON.stringify(state));
+}
+
+function loadProgress() {
+  const raw = localStorage.getItem('gwu-git-progress');
+  if (!raw) return;
+  try {
+    const state = JSON.parse(raw);
+    Object.entries(state).forEach(([id, indices]) => {
+      const ul = document.getElementById(id);
+      if (!ul) return;
+      indices.forEach(i => {
+        const li = ul.querySelectorAll('li')[i];
+        if (li) { li.classList.add('done'); li.querySelector('.cb').textContent = '✓'; }
+      });
+    });
+  } catch(e) {}
+  updateProgress();
+}
+
+// ── SIDEBAR ACTIVE ──
+const sections = document.querySelectorAll('.module, #cs');
+const navItems = document.querySelectorAll('.nav-item');
+
+function updateActive() {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 60) current = s.id;
+  });
+  navItems.forEach(item => {
+    item.classList.toggle('active', item.getAttribute('data-target') === current);
+  });
+}
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const target = document.getElementById(item.getAttribute('data-target'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.innerWidth <= 800) document.getElementById('sidebar').classList.remove('open');
+  });
+});
+
+// ── MOBILE ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── INIT ──
+window.addEventListener('scroll', updateActive, { passive: true });
+document.addEventListener('DOMContentLoaded', () => {
+  // Load saved theme
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  if (savedTheme === 'light') {
+    document.getElementById('themeIcon').textContent = '🌙';
+    document.getElementById('themeLabel').textContent = 'Switch to Dark Mode';
+  }
+  // Load progress
+  loadProgress();
+  updateActive();
+  initHeroCanvas();
+  // Wire up all copy buttons inside pre tags
+  document.querySelectorAll('pre').forEach(pre => {
+    if (!pre.querySelector('.copy-btn')) {
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.onclick = function() { copyCode(this); };
+      pre.appendChild(btn);
+    }
+  });
+});
+</script>
+</body>
+</html>
