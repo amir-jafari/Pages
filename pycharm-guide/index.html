@@ -216,12 +216,12 @@
     <div class="nav-group-title">Core Skills</div>
     <div class="nav-item" data-target="m3"><span class="dot i"></span>3 · Debugging<span class="check">✓</span></div>
     <div class="nav-item" data-target="m4"><span class="dot i"></span>4 · Terminal<span class="check">✓</span></div>
-    <div class="nav-item" data-target="m5"><span class="dot i"></span>5 · Git in PyCharm<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m5"><span class="dot i"></span>5 · Git &amp; GitHub<span class="check">✓</span></div>
   </div>
   <div class="nav-group">
     <div class="nav-group-title">Remote &amp; Advanced</div>
-    <div class="nav-item" data-target="m6"><span class="dot a"></span>6 · SSH &amp; Remote Interpreter<span class="check">✓</span></div>
-    <div class="nav-item" data-target="m7"><span class="dot a"></span>7 · Deployment &amp; Mapping<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m6"><span class="dot a"></span>6 · SSH &amp; AWS Interpreter<span class="check">✓</span></div>
+    <div class="nav-item" data-target="m7"><span class="dot a"></span>7 · AWS Deployment &amp; Sync<span class="check">✓</span></div>
     <div class="nav-item" data-target="cs"><span class="dot r"></span>Shortcut Cheat Sheet<span class="check">✓</span></div>
   </div>
 
@@ -289,14 +289,14 @@
       <div class="mod-card-body">
         <div class="mod-card-icon">📦</div>
         <div class="mod-card-num">Module 0</div>
-        <h3>Install &amp; Student License</h3>
+        <h3>Install &amp; First Project</h3>
         <ul class="mod-card-preview">
-          <li>Community vs Professional</li>
           <li>Free Pro license with .edu email</li>
-          <li>First-launch project setup</li>
+          <li>New project with Anaconda Python</li>
+          <li>Run a script &amp; Jupyter Notebook</li>
         </ul>
         <div class="mod-card-footer">
-          <div class="mod-card-badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 20m</span></div>
+          <div class="mod-card-badges"><span class="badge b">Beginner</span><span class="badge t">⏱ 25m</span></div>
           <span class="mod-card go">Go →</span>
         </div>
       </div>
@@ -379,14 +379,14 @@
       <div class="mod-card-body">
         <div class="mod-card-icon">⎇</div>
         <div class="mod-card-num">Module 5</div>
-        <h3>Git in PyCharm</h3>
+        <h3>Git &amp; GitHub</h3>
         <ul class="mod-card-preview">
-          <li>Commit, push, pull from the IDE</li>
-          <li>Visual diff &amp; merge tool</li>
-          <li>Branch management &amp; log viewer</li>
+          <li>Create GitHub repo, clone into PyCharm</li>
+          <li>Commit, push &amp; verify on github.com</li>
+          <li>Clone textbook &amp; reference repos</li>
         </ul>
         <div class="mod-card-footer">
-          <div class="mod-card-badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 30m</span></div>
+          <div class="mod-card-badges"><span class="badge i">Intermediate</span><span class="badge t">⏱ 35m</span></div>
           <span class="mod-card go">Go →</span>
         </div>
       </div>
@@ -397,14 +397,14 @@
       <div class="mod-card-body">
         <div class="mod-card-icon">🔐</div>
         <div class="mod-card-num">Module 6</div>
-        <h3>SSH &amp; Remote Interpreter</h3>
+        <h3>SSH &amp; AWS Remote Interpreter</h3>
         <ul class="mod-card-preview">
-          <li>Add SSH credentials in PyCharm</li>
-          <li>Configure a remote Python interpreter</li>
-          <li>Run &amp; debug code on a remote server</li>
+          <li>SSH config: IPv4 IP, ubuntu, .pem key</li>
+          <li>Add AWS as a Python interpreter</li>
+          <li>Run code on AWS, switch interpreters</li>
         </ul>
         <div class="mod-card-footer">
-          <div class="mod-card-badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40m</span></div>
+          <div class="mod-card-badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 45m</span></div>
           <span class="mod-card go">Go →</span>
         </div>
       </div>
@@ -415,11 +415,11 @@
       <div class="mod-card-body">
         <div class="mod-card-icon">🚀</div>
         <div class="mod-card-num">Module 7</div>
-        <h3>Deployment &amp; File Mapping</h3>
+        <h3>AWS Deployment &amp; File Sync</h3>
         <ul class="mod-card-preview">
-          <li>SFTP server configuration</li>
+          <li>SFTP deployment to AWS EC2</li>
           <li>Local ↔ remote path mapping</li>
-          <li>Auto-upload, sync, remote file browser</li>
+          <li>Upload, sync, remote file browser</li>
         </ul>
         <div class="mod-card-footer">
           <div class="mod-card-badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40m</span></div>
@@ -581,13 +581,125 @@
     </div>
   </div>
 
+  <h3>Quick Start: Local Project with Anaconda</h3>
+  <p style="font-size:14px;color:var(--text-muted);">For data science and deep learning, Anaconda is the recommended Python distribution. Follow these steps to connect your existing Anaconda installation to a new PyCharm project instead of creating a new virtualenv.</p>
+
+  <div class="callout info"><div class="callout-icon">ℹ️</div>
+    <div><strong>First, find your Anaconda Python path.</strong><br>
+    <strong>Mac:</strong> Open a Terminal (Utilities → Applications), run <code>which python</code>, and copy the result (e.g., <code>/opt/anaconda3/bin/python</code>).<br>
+    <strong>Windows:</strong> The default Anaconda path is <code>C:\ProgramData\anaconda3\python.exe</code></div>
+  </div>
+
+  <div class="menu-path">
+    <span class="mp-action">File</span>
+    <span class="mp-step highlight">New Project…</span>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>File → New Project — set a folder in the <em>Location</em> field</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Choose the directory where your project files will live.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Set <em>Interpreter Type</em> → <em>Custom Environment</em></strong>
+        <p style="font-size:14px;color:var(--text-muted);">Then set <em>Environment</em> to <strong>Select existing</strong> and <em>Type</em> to <strong>Python</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Click <em>Browse</em> next to Python path — paste the Anaconda path — click OK → Create</strong>
+        <p style="font-size:14px;color:var(--text-muted);">PyCharm creates the project using your Anaconda Python, giving you immediate access to NumPy, Pandas, TensorFlow, and all other Anaconda packages.</p>
+      </div>
+    </div>
+  </div>
+
+<div class="pc-dialog">
+  <div class="pc-dialog-bar"><div class="pc-dialog-title">New Project</div></div>
+  <div class="pc-dialog-body">
+    <div class="pc-sidebar">
+      <div class="pc-sidebar-item active">🐍 Pure Python</div>
+      <div class="pc-sidebar-item">🌐 Django</div>
+      <div class="pc-sidebar-item">⚡ FastAPI</div>
+      <div class="pc-sidebar-item">🔬 Flask</div>
+    </div>
+    <div class="pc-content">
+      <div class="pc-content-title">New Project</div>
+      <div class="pc-row"><span class="pc-label">Location:</span><span class="pc-input focused">~/Documents/PythonProject1</span></div>
+      <div class="pc-row"><span class="pc-label">Interpreter type:</span><span class="pc-dropdown">Custom environment</span></div>
+      <div class="pc-row"><span class="pc-label">Environment:</span><span class="pc-dropdown">Select existing</span></div>
+      <div class="pc-row"><span class="pc-label">Type:</span><span class="pc-dropdown">Python</span></div>
+      <div class="pc-row"><span class="pc-label">Python path:</span><span class="pc-input">/opt/anaconda3/bin/python</span><span class="pc-btn" style="margin-left:6px;flex-shrink:0;">Browse</span></div>
+      <div class="pc-btn-row"><span class="pc-btn">Cancel</span><span class="pc-btn primary">Create</span></div>
+    </div>
+  </div>
+</div>
+
+  <h3>Test with a Python Script</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <strong>Right-click the project name → New → Python File → name it <code>python_eval</code> → press Return</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Enter the two lines below in the editor, then right-click anywhere in the editor and select <em>Run 'python_eval'</em>.</p>
+        <div class="code-wrap">
+          <div class="code-label">python_eval.py</div>
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>import numpy as np
+print('hello world')</pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">5</div>
+      <div class="sb">
+        <strong>Verify the output in the Run panel at the bottom</strong>
+        <div class="terminal">
+          <div class="t-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="t-title">Run — python_eval</span></div>
+          <div class="t-body">
+            <div class="to">/opt/anaconda3/bin/python python_eval.py</div>
+            <div>hello world</div>
+            <div class="to">Process finished with exit code 0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Test with a Jupyter Notebook</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="sn">6</div>
+      <div class="sb">
+        <strong>Right-click the project name → New → Jupyter Notebook → name it <code>python_eval</code></strong>
+        <p style="font-size:14px;color:var(--text-muted);">PyCharm opens the notebook in its built-in Jupyter editor. A new <code>.ipynb</code> file appears in your project.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">7</div>
+      <div class="sb">
+        <strong>Enter <code>print('hello world')</code> in the cell → press <kbd>Shift</kbd>+<kbd>Return</kbd> to run it</strong>
+        <p style="font-size:14px;color:var(--text-muted);">The cell executes and <code>hello world</code> appears immediately below it with a green checkmark and a timing badge.</p>
+        <div class="callout ok"><div class="callout-icon">✅</div>
+          <div>PyCharm is now connected to your local Anaconda installation. You will later connect it to GitHub (Module 5) and an AWS cloud instance (Modules 6 &amp; 7) so you can run code on any of those systems.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="task-box">
-    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 0 — Install &amp; Activate</span></div>
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 0 — Install &amp; First Project</span></div>
     <ul class="checklist" id="tasks-m0">
       <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Apply for JetBrains Student License with your .edu email</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Download and install PyCharm Professional</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Activate with your JetBrains Account</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a new project with a virtualenv and run <code>print("Hello")</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Download and install PyCharm Professional, activate with your JetBrains Account</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Find your Anaconda Python path (Mac: <code>which python</code> in Terminal)</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a new project using Custom Environment → Select existing → paste Anaconda Python path</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create <code>python_eval.py</code>, enter <code>import numpy as np</code> and <code>print('hello world')</code>, and run it</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a Jupyter Notebook, run <code>print('hello world')</code> with Shift+Return, verify output</span></li>
     </ul>
   </div>
 </section>
@@ -1247,13 +1359,98 @@ conda activate ml-project
   <h3>Git Log Viewer</h3>
   <p>Open the Git panel (⌘9 / Alt+9) → click the <strong>Log</strong> tab. You see the full commit graph, click any commit to inspect changes, filter by author, branch, or date, and right-click to cherry-pick or revert.</p>
 
+  <h3>Connecting PyCharm to GitHub: Clone-First Workflow</h3>
+  <div class="concept">
+    <div class="ct">Create on GitHub, then clone into PyCharm</div>
+    Start every course project by creating the repository on GitHub first, then cloning it in PyCharm. This keeps your local work and remote GitHub copy permanently linked from day one.
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Log into github.com — click the <strong>+</strong> icon (top right) → New repository</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Enter a name (e.g., <code>PycharmGitHub</code>), choose <strong>Private</strong>, and click <strong>Create repository</strong>. You can make it public later — private repos are visible only to people you share them with.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>In PyCharm, click <em>Clone Repository</em> → select GitHub → Log In via GitHub…</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Enter your GitHub username and password if prompted. All your repositories will appear in the list.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Select <code>PycharmGitHub</code> from the list — verify the local directory — click Clone</strong>
+        <p style="font-size:14px;color:var(--text-muted);">PyCharm clones the (empty) repository and opens it as a new project. There will be no files yet.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <strong>Right-click the project name → New → Python File → name it <code>EvalGithub</code></strong>
+        <p style="font-size:14px;color:var(--text-muted);">Enter the line below. Notice the filename appears in <span style="color:#3fb950;font-weight:700;">green</span> — this means it is a new file not yet tracked by Git.</p>
+        <div class="code-wrap">
+          <div class="code-label">EvalGithub.py</div>
+          <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>print('Hello World')</pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">5</div>
+      <div class="sb">
+        <strong>Click the Commit icon (blue, left panel) → check the new file → enter a message → Commit and Push…</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Type a description like <code>Add file EvalGithub.py</code> in the message box at the bottom of the Commit panel. Click <strong>Commit and Push…</strong>.</p>
+
+<div class="pc-dialog" style="max-width:560px;">
+  <div class="pc-dialog-bar"><div class="pc-dialog-title">Commit</div></div>
+  <div class="pc-dialog-body" style="grid-template-columns:1fr;">
+    <div class="pc-content">
+      <div class="pc-pkg-list">
+        <div class="pc-pkg-row header" style="grid-template-columns:20px 1fr;"><span></span><span>File</span></div>
+        <div class="pc-pkg-row" style="grid-template-columns:20px 1fr;"><span style="color:#3fb950">✓</span><span class="pn" style="color:#3fb950;">EvalGithub.py</span></div>
+      </div>
+      <div style="background:#1e1e1e;border:1px solid #555;border-radius:3px;padding:8px;min-height:40px;font-size:12px;color:#a0a0a0;margin-bottom:8px;">Add file EvalGithub.py</div>
+      <div class="pc-btn-row">
+        <span class="pc-btn">Commit</span>
+        <span class="pc-btn primary">Commit and Push…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">6</div>
+      <div class="sb">
+        <strong>Go back to github.com — refresh your repository — the file is now there</strong>
+        <div class="callout tip"><div class="callout-icon">💡</div>
+          <div>As you write code for exercises and projects, create a GitHub repo for each one. When you make changes, commit and push so GitHub tracks all your changes. Click the <strong>git icon</strong> at the bottom-left of the PyCharm window to see the full change history — you can revert to an earlier version if you find errors.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Cloning Reference Repositories</h3>
+  <p>To clone any public GitHub repository, click <strong>Clone Repository → Repository URL</strong> and paste the URL. Two repositories worth cloning for this course:</p>
+  <table class="tbl">
+    <tr><th>Repository</th><th>Contents</th></tr>
+    <tr><td><code>github.com/NNDesignDeepLearning/<br>NNDesignDeepLearning</code></td><td>All textbook chapters and lab files. Clone this to run labs in PyCharm locally or on your AWS instance.</td></tr>
+    <tr><td><code>github.com/amir-jafari/Deep-Learning</code></td><td>TensorFlow and PyTorch example programs for the two deep learning frameworks used in this course.</td></tr>
+  </table>
+
   <div class="task-box">
-    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 5 — Commit &amp; Push from PyCharm</span></div>
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 5 — GitHub Integration</span></div>
     <ul class="checklist" id="tasks-m5">
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add a remote GitHub URL via Git → Manage Remotes</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Edit a file, open Commit panel (⌘K), write a message, commit</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Push to GitHub (⌘⇧K) and verify it appears on github.com</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open the Git Log (⌘9 → Log) and explore the commit history</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create a Private repository on github.com named <code>PycharmGitHub</code></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Clone it into PyCharm via Clone Repository → GitHub → Log In via GitHub</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Create <code>EvalGithub.py</code>, enter <code>print('Hello World')</code> — verify filename is green</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Commit and Push — verify the file appears on github.com</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Clone the NNDesignDeepLearning textbook repository by URL</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Clone the amir-jafari/Deep-Learning repository by URL</span></li>
     </ul>
   </div>
 </section>
@@ -1265,7 +1462,7 @@ conda activate ml-project
     <div class="mod-icon">🔐</div>
     <div class="mod-meta">
       <div class="badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40 min</span><span class="badge" style="background:rgba(88,166,255,.1);color:var(--accent);border-color:var(--accent);">Pro only</span></div>
-      <h2>Module 6 · SSH &amp; Remote Interpreter</h2>
+      <h2>Module 6 · SSH &amp; AWS Remote Interpreter</h2>
     </div>
   </div>
 
@@ -1317,17 +1514,15 @@ conda activate ml-project
         <strong>Settings → Tools → SSH Configurations</strong>
         <p style="font-size:14px;color:var(--text-muted);">Click <strong>+</strong> to add a new SSH connection. Fill in:</p>
         <table class="tbl">
-          <tr><th>Field</th><th>Example</th></tr>
-          <tr><td>Host</td><td>hpc.university.edu</td></tr>
-          <tr><td>Port</td><td>22</td></tr>
-          <tr><td>Username</td><td>your_netid</td></tr>
-          <tr><td>Auth type</td><td>Key pair (recommended) or Password</td></tr>
-          <tr><td>Private key</td><td>~/.ssh/id_ed25519</td></tr>
+          <tr><th>Field</th><th>Generic</th><th>AWS EC2 (Ubuntu AMI)</th></tr>
+          <tr><td>Host</td><td>hpc.university.edu</td><td>Your instance's <strong>IPv4 Public IP</strong></td></tr>
+          <tr><td>Port</td><td>22</td><td>22</td></tr>
+          <tr><td>Username</td><td>your_netid</td><td><strong>ubuntu</strong></td></tr>
+          <tr><td>Auth type</td><td>Key pair or Password</td><td><strong>Key pair</strong></td></tr>
+          <tr><td>Private key</td><td>~/.ssh/id_ed25519</td><td>Path to your <strong>.pem</strong> file</td></tr>
         </table>
         <div class="callout tip"><div class="callout-icon">💡</div>
-          <div>If you haven't created an SSH key yet, run this in the terminal first:<br>
-          <code>ssh-keygen -t ed25519 -C "your@email.com"</code><br>
-          Then copy the public key to the server: <code>ssh-copy-id username@hpc.university.edu</code></div>
+          <div><strong>For AWS:</strong> Find your IPv4 Public IP in the EC2 console. The username is <code>ubuntu</code> for Ubuntu-based AMIs. Select <strong>Key pair</strong> as the authentication type and browse to the <code>.pem</code> file you downloaded when launching the instance. Click <strong>Test Connection</strong> to verify the connection before saving.</div>
         </div>
       </div>
     </div>
@@ -1447,22 +1642,83 @@ conda activate ml-project
   <h3>Install Remote Packages</h3>
   <div class="code-wrap">
     <div class="code-label">Option A — via PyCharm GUI (Settings → Interpreter → +)</div>
-    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button"><span class="c"># PyCharm runs pip install on the REMOTE server for you</span></pre>
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="c"># PyCharm runs pip install on the REMOTE server for you</span></pre>
   </div>
   <div class="code-wrap">
     <div class="code-label">Option B — SSH terminal directly</div>
-    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button">ssh username@hpc.university.edu
-conda activate myenv
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button>ssh ubuntu@&lt;your-ipv4-public-ip&gt;
 pip install torch torchvision</pre>
   </div>
 
+  <h3>Connecting to AWS: Complete Remote Interpreter Setup</h3>
+  <div class="concept">
+    <div class="ct">After SSH is configured, set up the remote Python interpreter</div>
+    With your AWS SSH connection saved (from Step 1 above), you can now point PyCharm's Python interpreter at the Python running on your AWS instance. All code runs there; output streams back to your local Run panel.
+  </div>
+
+  <div class="menu-path">
+    <span class="mp-action">⌘,</span>
+    <span class="mp-step">Settings</span><span class="mp-sep">▸</span>
+    <span class="mp-step">Project</span><span class="mp-sep">▸</span>
+    <span class="mp-step">Python Interpreter</span><span class="mp-sep">▸</span>
+    <span class="mp-step highlight">Add Interpreter → On SSH…</span>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <strong>Settings → Project → Python Interpreter → Add Interpreter → On SSH</strong>
+        <p style="font-size:14px;color:var(--text-muted);">In the <em>New Target: SSH</em> dialog, select <strong>Existing</strong> for SSH Connection and choose your <strong>AWS</strong> configuration from the dropdown. Click <strong>Next</strong>, then <strong>Next</strong> again.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Select <em>System Interpreter</em> on the final wizard page</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Click <strong>Browse</strong> on the <em>Sync folders</em> field and select your local project directory. Click <strong>Browse</strong> on the <em>Remote path</em> field and navigate to the directory on the AWS instance where your project lives (e.g., <code>/home/ubuntu/PythonProject1</code>). Click <strong>OK</strong> and <strong>OK</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Click <em>Create</em> — on the next page click inside the Python Interpreter field → <em>Show All…</em></strong>
+        <p style="font-size:14px;color:var(--text-muted);">The remote interpreter appears in the list (e.g., <code>Remote Python 3.12.3 (sftp://ubuntu@…)</code>). Click on it to select it.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <strong>Click the pencil icon above the server names — rename the interpreter to <em>AWS</em> — click OK</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Giving it a clear name makes it easy to identify when switching between local and remote.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">5</div>
+      <div class="sb">
+        <strong>Click OK, OK, OK — PyCharm downloads stubs and skeletons from the AWS instance</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Wait for the update to finish (visible in the status bar at the bottom). Once complete, you can run <code>python_eval.py</code> — it now executes on your AWS instance, not your local computer.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">6</div>
+      <div class="sb">
+        <strong>Switch between Local and AWS at any time from the bottom-right corner</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Click the interpreter name in the status bar (bottom right of the PyCharm window). A popup lists all configured interpreters — select <strong>AWS</strong> to run remotely, or your local Anaconda interpreter to run locally.</p>
+      </div>
+    </div>
+  </div>
+
   <div class="task-box">
-    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 6 — Set Up Remote Interpreter</span></div>
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 6 — AWS Remote Interpreter</span></div>
     <ul class="checklist" id="tasks-m6">
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add SSH credentials in Settings → Tools → SSH Configurations</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Test the connection successfully</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add remote interpreter via Settings → Python Interpreter → On SSH</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run a simple script and see its output in the local PyCharm Run panel</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add SSH credentials: Host = IPv4 Public IP, Username = <code>ubuntu</code>, Auth = Key pair (.pem file)</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Click Test Connection — verify it shows "Successfully connected"</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Settings → Project → Python Interpreter → Add Interpreter → On SSH → select Existing → AWS</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Select System Interpreter, set Sync folders (local) and Remote path (on AWS), click Create</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Rename the remote interpreter to <em>AWS</em> via the pencil icon — click OK, OK, OK</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Run <code>python_eval.py</code> and confirm it runs on the AWS instance</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Switch between Local and AWS using the interpreter selector in the bottom-right corner</span></li>
     </ul>
   </div>
 </section>
@@ -1474,7 +1730,7 @@ pip install torch torchvision</pre>
     <div class="mod-icon">🚀</div>
     <div class="mod-meta">
       <div class="badges"><span class="badge a">Advanced</span><span class="badge t">⏱ 40 min</span><span class="badge" style="background:rgba(88,166,255,.1);color:var(--accent);border-color:var(--accent);">Pro only</span></div>
-      <h2>Module 7 · Deployment &amp; File Mapping</h2>
+      <h2>Module 7 · AWS Deployment &amp; File Sync</h2>
     </div>
   </div>
 
@@ -1510,26 +1766,50 @@ pip install torch torchvision</pre>
   </div>
 
   <h3>Step 1 — Configure a Deployment Server</h3>
+
+  <div class="callout info"><div class="callout-icon">ℹ️</div>
+    <div><strong>Two ways to open the Deployment configuration:</strong><br>
+    <strong>Via menu:</strong> <code>Tools → Deployment → Configuration…</code> (quickest)<br>
+    <strong>Via Settings:</strong> <code>Settings → Build, Execution, Deployment → Deployment</code></div>
+  </div>
+
 <div class="menu-path">
-  <span class="mp-action">⌘,</span>
-  <span class="mp-step">Settings</span><span class="mp-sep">▸</span>
-  <span class="mp-step">Build, Execution, Deployment</span><span class="mp-sep">▸</span>
-  <span class="mp-step highlight">Deployment</span>
+  <span class="mp-action">Tools</span>
+  <span class="mp-step">Deployment</span><span class="mp-sep">▸</span>
+  <span class="mp-step highlight">Configuration…</span>
 </div>
   <div class="steps">
     <div class="step">
       <div class="sn">1</div>
       <div class="sb">
-        <strong>Settings → Build, Execution, Deployment → Deployment</strong>
-        <p style="font-size:14px;color:var(--text-muted);">Click <strong>+</strong> → SFTP. Give it a name (e.g., "My Remote Server"). Fill in the Connection tab:</p>
+        <strong>Tools → Deployment → Configuration — click <strong>+</strong> in the upper-left corner → SFTP</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Enter a name for the server (e.g., <code>AWS</code>) and click <strong>OK</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <strong>Next to <em>SSH configuration</em>, click the three dots → click + in the SSH dialog</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Fill in the SSH connection details for your AWS instance:</p>
         <table class="tbl">
-          <tr><th>Field</th><th>Example</th></tr>
-          <tr><td>SSH Configuration</td><td>Select the one from Module 6</td></tr>
-          <tr><td>Root path</td><td>/home/your_netid/projects</td></tr>
+          <tr><th>Field</th><th>Value</th></tr>
+          <tr><td>Host</td><td>Your instance's <strong>IPv4 Public IP</strong></td></tr>
+          <tr><td>Port</td><td>22</td></tr>
+          <tr><td>Username</td><td><strong>ubuntu</strong></td></tr>
+          <tr><td>Authentication type</td><td><strong>Key pair</strong></td></tr>
+          <tr><td>Private key file</td><td>Path to your <strong>.pem</strong> file</td></tr>
         </table>
+        <p style="font-size:14px;color:var(--text-muted);">Click <strong>Test Connection</strong> to verify. Click the pencil icon above the left column and rename the connection to <strong>AWS</strong>. Click <strong>OK</strong>.</p>
         <div class="callout tip"><div class="callout-icon">💡</div>
-          <div>If you already set up SSH credentials in Module 6, select that same configuration here. You don't need to enter credentials again.</div>
+          <div>If you already configured the SSH connection in Module 6, select it from the dropdown here — no need to re-enter credentials.</div>
         </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <strong>Set the Root path and click OK</strong>
+        <p style="font-size:14px;color:var(--text-muted);">Set the <em>Root path</em> to the base directory on your AWS instance (e.g., <code>/home/ubuntu/projects</code>). Click <strong>OK</strong> to save the deployment server configuration.</p>
       </div>
     </div>
   </div>
@@ -1689,13 +1969,14 @@ __pycache__/
   </div>
 
   <div class="task-box">
-    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 7 — Deploy &amp; Sync</span></div>
+    <div class="task-box-head"><span class="task-tag">🎯 Task</span><span class="title">Module 7 — AWS Deployment &amp; File Sync</span></div>
     <ul class="checklist" id="tasks-m7">
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Add a Deployment server in Settings → Deployment → + → SFTP</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Set a path mapping: local project folder → remote home folder</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Right-click a Python file → Deployment → Upload — verify it appears on the server</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open Tools → Deployment → Browse Remote Host and explore the file tree</span></li>
-      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Edit a remote file directly and watch changes save back to the server</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Tools → Deployment → Configuration → + → SFTP → name it <em>AWS</em></span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Configure SSH: IPv4 Public IP, username <code>ubuntu</code>, Key pair (.pem file), Test Connection</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Set a path mapping: local project folder → remote directory on AWS</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Right-click a Python file → Deployment → Upload — verify it appears on the AWS instance</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Open Tools → Deployment → Browse Remote Host and explore the AWS file tree</span></li>
+      <li onclick="toggleTask(this)"><div class="cb"></div><span class="ct-text">Use Tools → Deployment → Sync with Deployed to compare local and remote files</span></li>
     </ul>
   </div>
 </section>
